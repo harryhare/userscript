@@ -5,9 +5,14 @@
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @match        https://www.douban.com/**
+// @include        https://www.douban.com/**
 // @grant        none
 // ==/UserScript==
 
+
+function getAbstract(type,url){
+	return "";
+}
 
 
 (function() {
