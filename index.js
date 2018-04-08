@@ -19,8 +19,7 @@ function getAbstract(type,url){
 (function() {
     'use strict';
 
-    // Your code here...
-    var targets=document.querySelectorAll('.new-status[data-uid="1540691"] .status-item .mod .bd .status-saying blockquote p');
+    var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
 
 	/*
 		http://upaste.me/xxxxx
