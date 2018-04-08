@@ -7,9 +7,23 @@
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
 // @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index2.js
-// @grant GM_xmlhttpRequest
+// @grant        GM_xmlhttpRequest
+// @connect      upaste.me
+// @connect      slexy.org
+// @connect      paste2.org
 // ==/UserScript==
 
+/*
+	http://upaste.me/xxxxx
+	https://slexy.org/view/xxxxx
+	https://paste2.org/xxxxx
+*/
+var url_prefix=new Map();
+url_prefix['upaste.me']='http://upaste.me/';
+url_prefix['slexy.org']='https://slexy.org/view/';
+url_prefix['paste2.org']='https://paste2.org/';
+const default_prefix='upaste.me';
+const max_code_length=100;
 var url_node=new Map();
 var url_getContent=new Map();
 url_getContent['upaste.me']=getContent1;
@@ -69,19 +83,7 @@ function onClick(e){
 
 (function() {
     'use strict';
-    var targets=document.querySelectorAll('.new-status[data-uid="1540691"] .status-item .mod .bd .status-saying blockquote p');
-
-	/*
-		http://upaste.me/xxxxx
-		https://slexy.org/view/xxxxx
-		https://paste2.org/xxxxx
-	*/
-	var url_prefix=new Map();
-	url_prefix['upaste.me']='http://upaste.me/';
-	url_prefix['slexy.org']='https://slexy.org/view/';
-	url_prefix['paste2.org']='https://paste2.org/';
-	const default_prefix='upaste.me';
-	const max_code_length=100;
+    var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
 
 	for(let i=0;i<targets.length;i++){
 		var t=targets[i];
@@ -106,22 +108,24 @@ function onClick(e){
 			}
 		}
 		if(find){
-            t=t.parentElement.parentElement;
-			var n1=document.createElement('a');
+            t=t.parentElement;
+			var n0=document.createElement('div');
+			var n1=document.createElement('p');
+			var a=document.createElement('a');
             var b=document.createElement('button');
-			var n2=document.createElement('p');
-			n2.appendChild(n1);
-            n2.appendChild(b);
-			n1.textContent=href;
-			n1.setAttribute('href',href);
+			t.parentElement.appendChild(n0);
+			n0.appendChild(n1);
+			n1.appendChild(a);
+            n1.appendChild(b);
+			a.textContent=href;
+			a.setAttribute('href',href);
             b.innerHTML='展开';
             b.attachId=href;
             b.onclick=onClick;
-			t.appendChild(n2);
-            var n3=document.createElement('p');
-            t.appendChild(n3);
-            url_node[href]=n3;
-            n3.id=href;
+            var text=document.createElement('p');
+            n0.appendChild(text);
+            url_node[href]=text;
+            text.id=href;
             GM_xmlhttpRequest({
                 method: "GET",
                 url: href,
