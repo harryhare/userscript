@@ -1,11 +1,12 @@
 // ==UserScript==
 // @name         Bonnae News
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @namespace    https://github.com/harryhare/Bonnae-News
+// @version      0.2
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @match        https://www.douban.com/**
-// @include        https://www.douban.com/**
+// @include      https://www.douban.com/**
+// @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index.js
 // @grant        none
 // ==/UserScript==
 
@@ -19,7 +20,7 @@ function getAbstract(type,url){
     'use strict';
 
     // Your code here...
-    var targets=$('.new-status[data-uid="1540691"] .status-item .mod .bd .status-saying blockquote p');
+    var targets=document.querySelectorAll('.new-status[data-uid="1540691"] .status-item .mod .bd .status-saying blockquote p');
 
 	/*
 		http://upaste.me/xxxxx
@@ -59,7 +60,7 @@ function getAbstract(type,url){
 			var n1=document.createElement('a');
 			var n2=document.createElement('p');
 			n2.appendChild(n1);
-			//todo jsonp get the html content
+			
 			n1.textContent=href;
 			n1.setAttribute('href',href);
 			t.parentElement.parentElement.appendChild(n2);
