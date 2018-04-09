@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.4
+// @version      0.5
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @match        https://www.douban.com/**
@@ -79,6 +79,7 @@ function onClick(e){
         e.target.innerHTML='收起';
         n3.style='';
     }
+    e.stopPropagation();
 }
 
 (function() {
@@ -110,7 +111,7 @@ function onClick(e){
 		if(find){
             t=t.parentElement;
 			var n0=document.createElement('div');
-			var n1=document.createElement('p');
+			var n1=document.createElement('blockquote');
 			var a=document.createElement('a');
             var b=document.createElement('button');
 			t.parentElement.appendChild(n0);
@@ -122,7 +123,7 @@ function onClick(e){
             b.innerHTML='展开';
             b.attachId=href;
             b.onclick=onClick;
-            var text=document.createElement('p');
+            var text=document.createElement('blockquote');
             n0.appendChild(text);
             url_node[href]=text;
             text.id=href;

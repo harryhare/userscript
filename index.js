@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.4
+// @version      0.5
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @match        https://www.douban.com/**
@@ -57,7 +57,7 @@ function getAbstract(type,url){
 		}
 		if(find){
 			var n1=document.createElement('a');
-			var n2=document.createElement('p');
+			var n2=document.createElement('blockquote');
 			n2.appendChild(n1);
 			
 			n1.textContent=href;
