@@ -4,6 +4,7 @@
 // @version      0.5.1
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
+// @license      GPL 3.0
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
 // @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index2.js
