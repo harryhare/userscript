@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.6
+// @version      0.6.1
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -25,11 +25,12 @@ url_prefix['slexy.org']='https://slexy.org/view/';
 url_prefix['paste2.org']='https://paste2.org/';
 const default_prefix='upaste.me';
 const max_code_length=100;
-var url_node=new Map();
 var url_getContent=new Map();
 url_getContent['upaste.me']=getContent1;
 url_getContent['slexy.org']=getContent2;
 url_getContent['paste2.org']=getContent3;
+var url_node=new Map();
+var url_node_multi=new Map();
 
 function getContent1(doc){
     return doc.getElementsByTagName('textarea')[0].innerHTML;
@@ -77,7 +78,7 @@ function attachContent(response){
 
 function onClick(e){
     //console.log(e.target.attachId);
-    var n3=url_node[e.target.attachId];
+    var n3=url_node_multi[e.target.attachId];
     if(e.target.innerHTML=='收起'){
         e.target.innerHTML='展开';
         n3.style='height:52px; overflow: hidden;';
@@ -127,7 +128,6 @@ function onClick(e){
 			a.textContent=href;
 			a.setAttribute('href',href);
             b.innerHTML='展开';
-            b.attachId=href;
             b.onclick=onClick;
             var text=document.createElement('blockquote');
             n0.appendChild(text);
@@ -136,6 +136,8 @@ function onClick(e){
             }else{
                 url_node[href]=[text];
             }
+            b.attachId=href+url_node[href].length;
+            url_node_multi[b.attachId]=text;
             text.id=href;
             GM_xmlhttpRequest({
                 method: "GET",
