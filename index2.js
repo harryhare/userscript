@@ -1,13 +1,13 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.5.1
+// @version      0.6
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
+// @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index2.js
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
-// @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index2.js
 // @grant        GM_xmlhttpRequest
 // @connect      upaste.me
 // @connect      slexy.org
@@ -58,16 +58,21 @@ function attachContent(response){
     if(response.status!=200){
         return;
     }
-    var node=url_node[response.finalUrl];
-    if(!node){
+    if(!url_node[response.finalUrl]){
         return;
     }
-    var text=getContent(response);
-    if(!text){
-        return;
+    for(var i=0;i<url_node[response.finalUrl].length;i++){
+        var node=url_node[response.finalUrl][i]
+        if(!node){
+            return;
+        }
+        var text=getContent(response);
+        if(!text){
+            return;
+        }
+        node.innerHTML=text;
+        node.style='height:52px; overflow: hidden;';
     }
-    node.innerHTML=text;
-    node.style='height:52px; overflow: hidden;';
 }
 
 function onClick(e){
@@ -126,7 +131,11 @@ function onClick(e){
             b.onclick=onClick;
             var text=document.createElement('blockquote');
             n0.appendChild(text);
-            url_node[href]=text;
+            if(url_node[href]){
+                url_node[href].push(text);
+            }else{
+                url_node[href]=[text];
+            }
             text.id=href;
             GM_xmlhttpRequest({
                 method: "GET",
