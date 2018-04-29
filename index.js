@@ -7,6 +7,7 @@
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
 // @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index.png
 // @grant        none
 // ==/UserScript==
 

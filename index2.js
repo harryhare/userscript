@@ -6,6 +6,7 @@
 // @author       harryhare
 // @license      GPL 3.0
 // @downloadURL  https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index2.js
+// @icon         https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index.png
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
 // @grant        GM_xmlhttpRequest
