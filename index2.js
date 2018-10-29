@@ -124,15 +124,15 @@ function onClick(e){
 			}
 		}
 		if(find){
-                        t=t.parentElement;
+			t=t.parentElement;
 			var n0=document.createElement('div');
 			var n1=document.createElement('blockquote');
 			var a=document.createElement('a');
-                        var b=document.createElement('button');
+			var b=document.createElement('button');
 			t.parentElement.appendChild(n0);
 			n0.appendChild(n1);
 			n1.appendChild(a);
-                        n1.appendChild(b);
+			n1.appendChild(b);
 			a.textContent=href;
 			a.setAttribute('href',href);
 			b.innerHTML='展开';
@@ -140,17 +140,17 @@ function onClick(e){
 			var text=document.createElement('blockquote');
 			n0.appendChild(text);
 			if(url_node[href]){
-			url_node[href].push(text);
+				url_node[href].push(text);
 			}else{
-			url_node[href]=[text];
+				url_node[href]=[text];
 			}
 			b.attachId=href+url_node[href].length;
 			url_node_multi[b.attachId]=text;
 			text.id=href;
 			GM_xmlhttpRequest({
-			method: "GET",
-			url: href,
-			onload: attachContent,
+				method: "GET",
+				url: href,
+				onload: attachContent,
 			});
 		}
 	}
