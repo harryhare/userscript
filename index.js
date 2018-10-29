@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.5
+// @version      0.5.1
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @match        https://www.douban.com/**
@@ -12,37 +12,32 @@
 // ==/UserScript==
 
 
-function getAbstract(type,url){
-	return "";
-}
-
-
 (function() {
-    'use strict';
+	'use strict';
 
-    var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
+	var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
 
 	/*
-		http://upaste.me/xxxxx
-		https://slexy.org/view/xxxxx
-		https://paste2.org/xxxxx (注意代码区分大小写)
-        https://paste.ee/p/xxxxx
+	http://upaste.me/xxxxx
+	https://slexy.org/view/xxxxx
+	https://paste2.org/xxxxx (注意代码区分大小写)
+	https://paste.ee/p/xxxxx
 	*/
 	var url_prefix=new Map();
 	url_prefix['upaste.me']='http://upaste.me/';
 	url_prefix['slexy.org']='https://slexy.org/view/';
 	url_prefix['paste2.org']='https://paste2.org/';
-    url_prefix['paste.ee']='https://paste.ee/p/'
+	url_prefix['paste.ee']='https://paste.ee/p/'
 	const default_prefix='upaste.me';
 	const max_code_length=100;
-	
+
 	for(let i=0;i<targets.length;i++){
 		var t=targets[i];
 		var content=t.textContent;
 		if(content.length>max_code_length){
 			continue;
 		}
-        var reg = /([a-zA-Z0-9]{4,})\s*\(([a-z0-9]+.[a-z]+)(\/p\/)?\)/g
+		var reg = /([a-zA-Z0-9]{4,})\s*\(([a-z0-9]+.[a-z]+)(\/p\/)?\)/g
 		var reg2=/([a-zA-Z0-9]{10,})/g;
 		var result=reg.exec(content);
 		var href='';
@@ -62,7 +57,7 @@ function getAbstract(type,url){
 			var n1=document.createElement('a');
 			var n2=document.createElement('blockquote');
 			n2.appendChild(n1);
-			
+
 			n1.textContent=href;
 			n1.setAttribute('href',href);
 			t.parentElement.parentElement.appendChild(n2);
