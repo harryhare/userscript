@@ -13,6 +13,7 @@
 // @connect      upaste.me
 // @connect      slexy.org
 // @connect      paste2.org
+// @connect      paste.ee
 // ==/UserScript==
 
 /*
@@ -24,12 +25,14 @@ var url_prefix=new Map();
 url_prefix['upaste.me']='http://upaste.me/';
 url_prefix['slexy.org']='https://slexy.org/view/';
 url_prefix['paste2.org']='https://paste2.org/';
+url_prefix['paste.ee']='https://paste.ee/p/';
 const default_prefix='upaste.me';
 const max_code_length=100;
 var url_getContent=new Map();
 url_getContent['upaste.me']=getContent1;
 url_getContent['slexy.org']=getContent2;
 url_getContent['paste2.org']=getContent3;
+url_getContent['paste.ee']=getContent4;
 var url_node=new Map();
 var url_node_multi=new Map();
 
@@ -42,13 +45,16 @@ function getContent2(doc){
 function getContent3(doc){
     return doc.getElementsByClassName('highlight code')[0].innerHTML;
 }
+function getContent4(doc){
+    return doc.getElementsByClassName('editor')[0].innerHTML;
+}
 function getContent(response){
     var parser=new window.DOMParser();
     var x=response.response;
     var xmlDoc=parser.parseFromString(x,"text/html");
     var url=response.finalUrl;
     var text='';
-    var reg=/https?:\/\/([a-zA-Z0-9]+\.[a-z]+)\//g;
+    var reg=/https?:\/\/([a-zA-Z0-9]+\.[a-z]+)(\/p\/)?/g;
     var result=reg.exec(url);
     if(result && result.length>1 && result[1] && url_getContent[result[1]]){
         return url_getContent[result[1]](xmlDoc);
@@ -73,7 +79,7 @@ function attachContent(response){
             return;
         }
         node.innerHTML=text;
-        node.style='height:52px; overflow: hidden;';
+        node.style='height:20px; overflow: hidden;';
     }
 }
 
@@ -100,7 +106,7 @@ function onClick(e){
 		if(content.length>max_code_length){
 			continue;
 		}
-		var reg=/([a-zA-Z0-9]{4,})\s*\(\s*([a-z0-9]+.[a-z]+)\s*\)/g;
+		var reg=/([a-zA-Z0-9]{4,})\s*\(\s*([a-z0-9]+.[a-z]+)(\/p\/)?\s*\)/g;
 		var reg2=/([a-zA-Z0-9]{10,})/g;
 		var result=reg.exec(content);
 		var href='';

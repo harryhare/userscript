@@ -26,11 +26,13 @@ function getAbstract(type,url){
 		http://upaste.me/xxxxx
 		https://slexy.org/view/xxxxx
 		https://paste2.org/xxxxx (注意代码区分大小写)
+        https://paste.ee/p/xxxxx
 	*/
 	var url_prefix=new Map();
 	url_prefix['upaste.me']='http://upaste.me/';
 	url_prefix['slexy.org']='https://slexy.org/view/';
 	url_prefix['paste2.org']='https://paste2.org/';
+    url_prefix['paste.ee']='https://paste.ee/p/'
 	const default_prefix='upaste.me';
 	const max_code_length=100;
 	
@@ -40,7 +42,7 @@ function getAbstract(type,url){
 		if(content.length>max_code_length){
 			continue;
 		}
-		var reg=/([a-zA-Z0-9]{4,})\s*\(([a-z0-9]+.[a-z]+)\)/g;
+        var reg = /([a-zA-Z0-9]{4,})\s*\(([a-z0-9]+.[a-z]+)(\/p\/)?\)/g
 		var reg2=/([a-zA-Z0-9]{10,})/g;
 		var result=reg.exec(content);
 		var href='';
