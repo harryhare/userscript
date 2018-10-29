@@ -80,7 +80,7 @@ function attachContent(response){
 		    return;
 		}
 		node.innerHTML=text;
-		node.style='height:45px; overflow: hidden;';
+		node.style='height:52px; overflow: hidden;';
 	}
 }
 
