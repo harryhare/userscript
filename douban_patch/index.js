@@ -4,6 +4,9 @@
 // @version      0.1
 // @description  prevent the redirect when click on reboradcast
 // @author       harryhare
+// @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_patch/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.douban.com/*
 // @grant        none
 // ==/UserScript==

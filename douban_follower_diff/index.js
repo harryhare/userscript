@@ -5,6 +5,8 @@
 // @description  show the change of your follower
 // @author       harryhare
 // @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_follower_diff/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.douban.com/contacts/rlist*
 // @grant        GM_getValue
 // @grant        GM_setValue

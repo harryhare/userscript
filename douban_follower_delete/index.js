@@ -5,6 +5,8 @@
 // @description  add button to douban to delete follower
 // @author       harryhare
 // @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_follower_delete/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.douban.com/contacts/rlist**
 // @grant        none
 // ==/UserScript==

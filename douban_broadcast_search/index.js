@@ -5,6 +5,8 @@
 // @description  search user braodcast
 // @author       harryhare
 // @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_broadcast_search/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.douban.com/people/*/statuses**
 // @match        https://www.douban.com
 // @match        https://www.douban.com/?p=*

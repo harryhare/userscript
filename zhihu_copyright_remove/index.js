@@ -4,6 +4,9 @@
 // @version      0.2
 // @description  remove copyright protection on zhihu.com
 // @author       harryhare
+// @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/zhihu_copyright_remove/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.zhihu.com/**
 // @include      https://www.zhihu.com/**
 // @grant        none

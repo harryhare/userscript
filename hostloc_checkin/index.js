@@ -4,6 +4,9 @@
 // @version      0.3.1
 // @description  add button to get hostloc credit through visit others' space
 // @author       harryhare
+// @license      GPL 3.0
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/hostloc_checkin/index.js
+// @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.hostloc.com/**
 // @match        http://www.hostloc.com/**
 // @grant        none
