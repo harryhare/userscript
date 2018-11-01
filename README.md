@@ -18,11 +18,11 @@
 
 ||说明| greasyfork 地址|
 |---|---|---|
-| 去掉复制的copyright信息 |[说明](https://github.com/harryhare/userscript/tree/master/zhihu_copyright_remove) | [安装](https://greasyfork.org/scripts/40730-remove-zhihu-copyright) |
+| 去掉copyright |[说明](https://github.com/harryhare/userscript/tree/master/zhihu_copyright_remove) | [安装](https://greasyfork.org/scripts/40730-remove-zhihu-copyright) |
 
 
 #### hostloc
 
 ||说明| greasyfork 地址|
 |---|---|---|
-| 一键获得访问空间的积分 |[说明](https://github.com/harryhare/userscript/tree/master/hostloc_checkin)|[安装](https://greasyfork.org/scripts/40444-hostloc-checkin) |
+| 每日积分 |[说明](https://github.com/harryhare/userscript/tree/master/hostloc_checkin)|[安装](https://greasyfork.org/scripts/40444-hostloc-checkin) |
