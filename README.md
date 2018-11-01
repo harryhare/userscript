@@ -2,9 +2,11 @@
 
 一些网站的tempermonkey脚本的集合
 
+可以通过 greasyfork 安装使用
+
 #### 豆瓣
 
-|| 说明 | greasyfork 安装 地址 |
+|| 说明 | greasyfork 地址 |
 |---|---|---|
 | Bonnae News | [说明](https://github.com/harryhare/userscript/tree/master/douban_bonnae_news) | [安装](https://greasyfork.org/scripts/40424-bonnae-news-with-text) |
 | 广播搜索|[说明](https://github.com/harryhare/userscript/tree/master/douban_broadcast_search)|[安装](https://greasyfork.org/scripts/370886-search-broadcast-for-douban) |
