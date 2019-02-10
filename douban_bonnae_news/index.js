@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.5.1
+// @version      0.5.2
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -38,7 +38,7 @@
 		if(content.length>max_code_length){
 			continue;
 		}
-		var reg = /([a-zA-Z0-9]{4,})\s*\(([a-z0-9]+.[a-z]+)(\/p\/)?\)/g
+		var reg=/([a-zA-Z0-9]{4,})\s*\(\s*([a-z0-9]+.[a-z]+)(\/[a-zA-Z0-9]+\/)?\s*\)/g;
 		var reg2=/([a-zA-Z0-9]{10,})/g;
 		var result=reg.exec(content);
 		var href='';
