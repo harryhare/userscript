@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.6.4
+// @version      0.7.0
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -9,6 +9,8 @@
 // @icon         https://raw.githubusercontent.com/harryhare/Bonnae-News/master/index.png
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
+// @match        https://m.douban.com/**
+// @include      https://m.douban.com/**
 // @grant        GM_xmlhttpRequest
 // @connect      upaste.me
 // @connect      slexy.org
@@ -97,9 +99,102 @@ function onClick(e){
 	e.stopPropagation();
 }
 
-(function() {
+function get_targets(){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		return get_targets_for_www();
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		return get_targets_for_m();
+	}
+}
+function get_targets_for_www(){
+	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
+}
+function get_targets_for_m(){
+	var targets=[];
+	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"]');
+	for(let i=0;i<ss.length;i++){
+		var t=ss[i].parentElement.parentElement.querySelector("div.content div");
+		if (t!=null){
+			targets.push(t);
+		}
+	}
+	return targets;
+}
+
+
+function attach_result(t,href){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		return attach_result_for_www(t,href);
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		return attach_result_for_m(t,href);
+	}
+}
+
+function attach_result_for_www(t,href){
+	t=t.parentElement;
+	var n0=document.createElement('div');
+	var n1=document.createElement('blockquote');
+	var a=document.createElement('a');
+	var b=document.createElement('button');
+	t.parentElement.appendChild(n0);
+	n0.appendChild(n1);
+	n1.appendChild(a);
+	n1.appendChild(b);
+	a.textContent=href;
+	a.setAttribute('href',href);
+	b.innerHTML='展开';
+	b.onclick=onClick;
+	var text=document.createElement('blockquote');
+	n0.appendChild(text);
+	if(url_node[href]){
+		url_node[href].push(text);
+	}else{
+		url_node[href]=[text];
+	}
+	b.attachId=href+url_node[href].length;
+	url_node_multi[b.attachId]=text;
+	text.id=href;
+	GM_xmlhttpRequest({
+		method: "GET",
+		url: href,
+		onload: attachContent,
+	});
+}
+
+function attach_result_for_m(t,href){
+	var n0=document.createElement('div');
+	var a=document.createElement('a');
+	var b=document.createElement('button');
+	n0.appendChild(a);
+	n0.appendChild(b);
+	a.textContent=href;
+	a.setAttribute('href',href);
+	b.innerHTML='展开';
+	b.onclick=onClick;
+	var text=document.createElement('div');
+	n0.appendChild(text);
+	if(url_node[href]){
+		url_node[href].push(text);
+	}else{
+		url_node[href]=[text];
+	}
+	b.attachId=href+url_node[href].length;
+	url_node_multi[b.attachId]=text;
+	text.id=href;
+	GM_xmlhttpRequest({
+		method: "GET",
+		url: href,
+		onload: attachContent,
+	});
+	t.parentElement.parentElement.parentElement.appendChild(n0);
+}
+
+
+function edit_page() {
 	'use strict';
-	var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
+	var targets=get_targets();
 
 	for(let i=0;i<targets.length;i++){
 		var t=targets[i];
@@ -124,34 +219,16 @@ function onClick(e){
 			}
 		}
 		if(find){
-			t=t.parentElement;
-			var n0=document.createElement('div');
-			var n1=document.createElement('blockquote');
-			var a=document.createElement('a');
-			var b=document.createElement('button');
-			t.parentElement.appendChild(n0);
-			n0.appendChild(n1);
-			n1.appendChild(a);
-			n1.appendChild(b);
-			a.textContent=href;
-			a.setAttribute('href',href);
-			b.innerHTML='展开';
-			b.onclick=onClick;
-			var text=document.createElement('blockquote');
-			n0.appendChild(text);
-			if(url_node[href]){
-				url_node[href].push(text);
-			}else{
-				url_node[href]=[text];
-			}
-			b.attachId=href+url_node[href].length;
-			url_node_multi[b.attachId]=text;
-			text.id=href;
-			GM_xmlhttpRequest({
-				method: "GET",
-				url: href,
-				onload: attachContent,
-			});
+			attach_result(t,href);
 		}
+	}
+}
+
+(function(){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		edit_page();
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		setTimeout(edit_page,2000);
 	}
 })();

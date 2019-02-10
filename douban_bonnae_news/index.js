@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.5.2
+// @version      0.7.0
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -9,21 +9,74 @@
 // @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://www.douban.com/**
 // @include      https://www.douban.com/**
+// @match        https://m.douban.com/**
+// @include      https://m.douban.com/**
 // @grant        none
+// @run-at       document-end
 // ==/UserScript==
 
+function get_targets(){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		return get_targets_for_www();
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		return get_targets_for_m();
+	}
+}
+function get_targets_for_www(){
+	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
+}
+function get_targets_for_m(){
+	var targets=[];
+	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"]');
+	for(let i=0;i<ss.length;i++){
+		var t=ss[i].parentElement.parentElement.querySelector("div.content div");
+		if (t!=null){
+			targets.push(t);
+		}
+	}
+	return targets;
+}
 
-(function() {
-	'use strict';
 
-	var targets=document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p');
+function attach_result(t,href){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		return attach_result_for_www(t,href);
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		return attach_result_for_m(t,href);
+	}
+}
 
+function attach_result_for_www(t,href){
+	var n1=document.createElement('a');
+	var n2=document.createElement('blockquote');
+	n2.appendChild(n1);
+
+	n1.textContent=href;
+	n1.setAttribute('href',href);
+	t.parentElement.parentElement.appendChild(n2);
+	return;
+}
+
+function attach_result_for_m(t,href){
+	var n1=document.createElement('a');
+	n1.textContent=href;
+	n1.setAttribute('href',href);
+	t.parentElement.parentElement.parentElement.appendChild(n1);
+	return;
+}
+
+
+function edit_page() {
 	/*
 	http://upaste.me/xxxxx
 	https://slexy.org/view/xxxxx
 	https://paste2.org/xxxxx (注意代码区分大小写)
 	https://paste.ee/p/xxxxx
 	*/
+	var targets = get_targets();
+	console.log("total targets"+targets.length);
 	var url_prefix=new Map();
 	url_prefix['upaste.me']='http://upaste.me/';
 	url_prefix['slexy.org']='https://slexy.org/view/';
@@ -55,13 +108,16 @@
 			}
 		}
 		if(find){
-			var n1=document.createElement('a');
-			var n2=document.createElement('blockquote');
-			n2.appendChild(n1);
-
-			n1.textContent=href;
-			n1.setAttribute('href',href);
-			t.parentElement.parentElement.appendChild(n2);
+			attach_result(t,href);
 		}
+	}
+}
+
+(function(){
+	if (window.location.href.startsWith("https://www.douban.com")){
+		edit_page();
+	}
+	if (window.location.href.startsWith("https://m.douban.com")){
+		setTimeout(edit_page,2000);
 	}
 })();
