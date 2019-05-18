@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Douban Copyright
 // @namespace    https://github.com/harryhare
-// @version      0.1.3
+// @version      0.1.4
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -19,7 +19,8 @@
 (function() {
     'use strict';
 
-    var targets=document.querySelectorAll('div#link-report.note,div.review-content.clearfix');
+    document.body.oncopy=(e)=>{e.stopPropagation();};
+    var targets=document.querySelectorAll('div#link-report .note,div.review-content.clearfix');
     for(let i=0;i<targets.length;i++){
         targets[i].oncopy=(e)=>{e.stopPropagation();};
     }
