@@ -1,14 +1,18 @@
 // ==UserScript==
-// @name         Remove Zhihu Copyright
+// @name         Remove Annoying Copyright Claim On Copy
 // @namespace    https://github.com/harryhare
-// @version      0.2
-// @description  remove copyright protection on zhihu.com
+// @version      0.3
+// @description  remove copyright protection on zhihu.com, jianshu.com, douban.com
 // @author       harryhare
 // @license      GPL 3.0
 // @downloadURL  https://github.com/harryhare/userscript/raw/master/zhihu_copyright_remove/index.js
 // @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
-// @match        https://www.zhihu.com/**
-// @include      https://www.zhihu.com/**
+// @match        https://*.zhihu.com/**
+// @match        https://*.jianshu.com/**
+// @match        https://*.douban.com/**
+// @include      https://*.zhihu.com/**
+// @include      https://*.jianshu.com/**
+// @include      https://*.douban.com/**
 // @grant        none
 // ==/UserScript==
 
@@ -17,9 +21,26 @@ function rewrite_html(e){
     e.innerHTML=inner;
 }
 
+function do_douban(){
+    var targets=document.querySelectorAll('div#link-report .note,div.review-content.clearfix');
+    for(let i=0;i<targets.length;i++){
+        targets[i].oncopy=(e)=>{e.stopPropagation();};
+    }
+}
+
 (function() {
     'use strict';
-    document.body.oncopy=(e)=>{e.stopPropagation();};
+    if(location.href.match("https://[a-z]+.douban.com")!=null){
+        do_douban();
+    }else{
+        document.body.oncopy=(e)=>{e.stopPropagation();};
+        //document.documentElement.addEventListener('copy',function(e){e.stopImmediatePropagation()});
+        //document.documentElement.addEventListener('copy',function(e){e.stopPropagation()});
+        //document.body.addEventListener('copy',function(e){e.stopPropagation()});
+        //document.body.oncopy=function(e){e.stopPropagation()};
+    }
+
+
     /*
     var targets=document.querySelectorAll('span.RichText.CopyrightRichText-richText');
     for(let i=0;i<targets.length;i++){
