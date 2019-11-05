@@ -1,18 +1,19 @@
 // ==UserScript==
 // @name         Remove Annoying Copyright Claim On Copy
 // @namespace    https://github.com/harryhare
-// @version      0.3
+// @version      0.4
 // @description  remove copyright protection on zhihu.com, jianshu.com, douban.com
 // @author       harryhare
 // @license      GPL 3.0
-// @downloadURL  https://github.com/harryhare/userscript/raw/master/zhihu_copyright_remove/index.js
 // @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
 // @match        https://*.zhihu.com/**
 // @match        https://*.jianshu.com/**
 // @match        https://*.douban.com/**
+// @match        https://*.csdn.net/**
 // @include      https://*.zhihu.com/**
 // @include      https://*.jianshu.com/**
 // @include      https://*.douban.com/**
+// @include      https://*.csdn.net/**
 // @grant        none
 // ==/UserScript==
 
@@ -28,10 +29,20 @@ function do_douban(){
     }
 }
 
+function do_csdn(){
+    //article_content
+    var targets=document.querySelectorAll('div#article_content');
+    for(let i=0;i<targets.length;i++){
+        targets[i].oncopy=(e)=>{e.stopPropagation();};
+    }
+}
+
 (function() {
     'use strict';
     if(location.href.match("https://[a-z]+.douban.com")!=null){
         do_douban();
+    }else if(location.href.match("https://[a-z]+.csdn.net")!=null){
+        do_csdn();
     }else{
         document.body.oncopy=(e)=>{e.stopPropagation();};
         //document.documentElement.addEventListener('copy',function(e){e.stopImmediatePropagation()});
