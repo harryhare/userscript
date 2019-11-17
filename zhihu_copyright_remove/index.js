@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Remove Annoying Copyright Claim On Copy
 // @namespace    https://github.com/harryhare
-// @version      0.4
+// @version      0.4.1
 // @description  remove copyright protection on zhihu.com, jianshu.com, douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -10,10 +10,12 @@
 // @match        https://*.jianshu.com/**
 // @match        https://*.douban.com/**
 // @match        https://*.csdn.net/**
+// @match        https://*.ftchinese.com/**
 // @include      https://*.zhihu.com/**
 // @include      https://*.jianshu.com/**
 // @include      https://*.douban.com/**
 // @include      https://*.csdn.net/**
+// @match        https://*.ftchinese.com/**
 // @grant        none
 // ==/UserScript==
 
