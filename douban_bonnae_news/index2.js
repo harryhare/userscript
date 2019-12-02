@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.7.1
+// @version      0.7.2
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -30,7 +30,7 @@ url_prefix['slexy.org']='https://slexy.org/view/';
 url_prefix['paste2.org']='https://paste2.org/';
 url_prefix['paste.ee']='https://paste.ee/p/';
 const default_prefix='slexy.org';
-const max_code_length=100;
+const max_code_length=200;
 var url_getContent=new Map();
 url_getContent['upaste.me']=getContent1;
 url_getContent['slexy.org']=getContent2;
