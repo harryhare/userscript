@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Bonnae News With Text
-// @namespace    https://github.com/harryhare/Bonnae-News
+// @namespace    https://github.com/harryhare/userscript
 // @version      0.7.5
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
