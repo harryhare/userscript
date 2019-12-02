@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.7.2
+// @version      0.7.4
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -108,11 +108,11 @@ function get_targets(){
 	}
 }
 function get_targets_for_www(){
-	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"],.status-item[data-uid="61954750"] .mod .bd .status-saying blockquote p')
+	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p')
 }
 function get_targets_for_m(){
 	var targets=[];
-	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"],a[href="/people/61954750/"]');
+	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"]');
 	for(let i=0;i<ss.length;i++){
 		var t=ss[i].parentElement.parentElement.querySelector("div.content div");
 		if (t!=null){
