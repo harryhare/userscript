@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Bonnae News With Text
 // @namespace    https://github.com/harryhare/Bonnae-News
-// @version      0.7.4
+// @version      0.7.5
 // @description  for Bonnae broadcast on douban.com
 // @author       harryhare
 // @license      GPL 3.0
@@ -30,7 +30,7 @@ url_prefix['slexy.org']='https://slexy.org/view/';
 url_prefix['paste2.org']='https://paste2.org/';
 url_prefix['paste.ee']='https://paste.ee/p/';
 const default_prefix='slexy.org';
-const max_code_length=200;
+const max_code_length=100;
 var url_getContent=new Map();
 url_getContent['upaste.me']=getContent1;
 url_getContent['slexy.org']=getContent2;
@@ -108,11 +108,11 @@ function get_targets(){
 	}
 }
 function get_targets_for_www(){
-	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p')
+	return document.querySelectorAll('.new-status .status-item[data-uid="1540691"] .mod .bd .status-saying blockquote p,.new-status .status-item[data-uid="61954750"] .mod .bd .status-saying blockquote p')
 }
 function get_targets_for_m(){
 	var targets=[];
-	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"]');
+	var ss=document.querySelectorAll('ul.status-list li div.desc a[href="/people/1540691/"],ul.status-list li div.desc a[href="/people/1540691/"] a[href="/people/61954750/"]');
 	for(let i=0;i<ss.length;i++){
 		var t=ss[i].parentElement.parentElement.querySelector("div.content div");
 		if (t!=null){
