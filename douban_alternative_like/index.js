@@ -42,20 +42,20 @@ function on_click(sid,ck){
 
 function on_succ(xmlhttp){
 	var r=JSON.parse(xmlhttp.response);
-	var n=0;
-	if( r  && r.likers && r.likers.length){
-		n=r.likers.length;
+	//console.log(r);
+	//console.log(r.count);
+	var n="";
+	if(r && r.count){
+		n=r.count;
 	}
-	console.log(r);
-	console.log(r.count);
 	if(liked){
-			button.innerHTML="备用赞"+r.count;
+			button.innerHTML="备用赞"+n;
 			liked=false;
 	}else{
-			button.innerHTML="已赞"+r.count;
+			button.innerHTML="已赞"+n;
 			liked=true;
 	}
-	console.log("done!");
+	//console.log("done!");
 }
 
 
@@ -63,7 +63,7 @@ function do_unlike(sid, ck){
 	var xmlhttp=new XMLHttpRequest();
     var url="https://www.douban.com/j/status/unlike";
     var data="sid="+sid+"&ck="+ck;
-    console.log("like: sid="+sid+"& ck="+ck);
+    //console.log("like: sid="+sid+"& ck="+ck);
     xmlhttp.open("POST",url,true);
     xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	xmlhttp.onreadystatechange=function(){
@@ -79,7 +79,7 @@ function do_like(sid, ck){
 	var xmlhttp=new XMLHttpRequest();
     var url="https://www.douban.com/j/status/like";
     var data="sid="+sid+"&ck="+ck;
-    console.log("like: sid="+sid+"& ck="+ck);
+    //console.log("like: sid="+sid+"& ck="+ck);
     xmlhttp.open("POST",url,true);
     xmlhttp.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
 	xmlhttp.onreadystatechange=function(){
@@ -97,28 +97,29 @@ function do_like(sid, ck){
 	if(!x){
 		return;
 	}
-	
+
 	//var y=document.querySelectorAll("div.status-item")[0];
 	var y = x.children[0];
 	if(!y){
 		return;
 	}
-	
+
 	//var sid=y.getAttribute("data-sid");
 	var sid=y.getAttribute("data-object_id");
 	var ck=getCookie("ck");
-	
+
 	like_container=y.children[0];
 	num_container=y.children[1];
 	liked = (y.children[0].innerText==="已赞");
     button=document.createElement('button');
+
 	if(liked==false){
-		button.innerHTML='备用赞';
+		button.innerHTML='备用赞 '+num_container.innerText ;
 	}else{
-		button.innerHTML='已赞';
+		button.innerHTML='已赞 '+num_container.innerText;
 	}
 	button.onclick=(e)=>{
-		
+
 		on_click(sid,ck);
 	};
 	x.appendChild(button);
