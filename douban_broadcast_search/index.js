@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         search broadcast for douban
 // @namespace    harryhare.github.io
-// @version      0.2.2
+// @version      0.2.3
 // @description  search user braodcast
 // @author       harryhare
 // @license      GPL 3.0
@@ -88,7 +88,7 @@ function getContent(response){
 			result_container.append(status);
 		}
 	}
-	return statuse_nodes.length<20;
+	return statuse_nodes.length==0;
 }
 
 
