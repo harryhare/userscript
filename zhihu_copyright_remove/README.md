@@ -1,7 +1,25 @@
 ### 功能
 
-清除知乎,简书，豆瓣,csdn 上回答的copyright限制，包括：
+清除 copyright 限制（剪贴板消毒），包括：
 
 * 去掉复制禁止
 
 * 去掉复制时附加的头尾版权声明
+
+### 支持网站
+
+- 知乎 
+- 简书 
+- 豆瓣
+- CSDN
+- ft中文
+- 一亩三分地
+- B站
+- 掘金
+- 牛客
+
+
+
+### 代码地址
+
+https://github.com/harryhare/userscript
