@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         Remove Annoying Copyright Claim On Copy
+// @name         Restore Clipboard ( 剪贴板消毒 ) 
 // @namespace    https://github.com/harryhare
 // @version      0.4.2
-// @description  remove copyright protection on zhihu.com, jianshu.com, douban.com
+// @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
 // @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
