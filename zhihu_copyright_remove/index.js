@@ -22,6 +22,17 @@
 // use match instead of include
 // https://stackoverflow.com/questions/31817758/what-is-the-difference-between-include-and-match-in-userscripts
 
+// 代码思路
+// if ( oncopy 所在的 element 在 document 上){
+//	 在 document.body 上 stopPropagation();
+// }
+// else if level( oncopy 所在的 element) > level(content element){
+//     在 content element 上调用 stopPropagation();
+// }
+// else if level( oncopy 所在的 element) == level(content element){
+//	 操作剪贴板
+// }
+
 
 function rewrite_html(e){
 	let inner=e.innerHTML;
