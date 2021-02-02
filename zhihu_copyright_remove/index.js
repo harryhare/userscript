@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore Clipboard ( 剪贴板消毒 ) 
 // @namespace    https://github.com/harryhare
-// @version      0.4.2
+// @version      0.4.3
 // @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
@@ -14,6 +14,7 @@
 // @match        https://*.1point3acres.com/**
 // @match        https://blog.skk.moe/**
 // @match        https://www.bilibili.com/**
+// @match        https://juejin.cn/**
 // @grant        none
 // ==/UserScript==
 
@@ -34,8 +35,14 @@ function do_douban(){
 }
 
 function do_csdn(){
-	//article_content
 	var targets=document.querySelectorAll('div#article_content');
+	for(let i=0;i<targets.length;i++){
+		targets[i].oncopy=(e)=>{e.stopPropagation();};
+	}
+}
+
+function do_juejin(){
+	var targets=document.querySelectorAll('div.article-content div.markdown-body');
 	for(let i=0;i<targets.length;i++){
 		targets[i].oncopy=(e)=>{e.stopPropagation();};
 	}
@@ -45,6 +52,8 @@ function do_bilibili(){
 
 	async function clean(e) {
 		e.preventDefault();
+		//可能有用
+		// e.stopImmediatePropagation(); // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
 		var copytext = window.getSelection().toString();
 		console.log(await navigator.clipboard.readText());
 		await navigator.clipboard.writeText(window.getSelection().toString());
@@ -92,6 +101,8 @@ function do_bilibili(){
 		do_csdn();
 	}else if(location.href.match("https://[a-z]+.bilibili.com")!=null){
 		do_bilibili();
+	}else if(location.href.match("https://juejin.cn")!=null){
+		do_juejin();
 	}else{
 		document.body.oncopy=(e)=>{e.stopPropagation();};
 		//document.documentElement.addEventListener('copy',function(e){e.stopImmediatePropagation()});
