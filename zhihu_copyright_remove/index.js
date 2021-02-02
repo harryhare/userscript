@@ -14,16 +14,12 @@
 // @match        https://*.1point3acres.com/**
 // @match        https://blog.skk.moe/**
 // @match        https://www.bilibili.com/**
-// @include      https://*.zhihu.com/**
-// @include      https://*.jianshu.com/**
-// @include      https://*.douban.com/**
-// @include      https://*.csdn.net/**
-// @include        https://*.ftchinese.com/**
-// @include        https://*.1point3acres.com/**
-// @include        https://blog.skk.moe/**
-// @include        https://www.bilibili.com/**
 // @grant        none
 // ==/UserScript==
+
+// use match instead of include
+// https://stackoverflow.com/questions/31817758/what-is-the-difference-between-include-and-match-in-userscripts
+
 
 function rewrite_html(e){
 	let inner=e.innerHTML;
@@ -44,7 +40,7 @@ function do_csdn(){
 		targets[i].oncopy=(e)=>{e.stopPropagation();};
 	}
 }
-var data;
+
 function do_bilibili(){
 
 	async function clean(e) {
