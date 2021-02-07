@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore Clipboard ( 剪贴板消毒，去掉版权信息 ) 
 // @namespace    https://github.com/harryhare
-// @version      0.4.5
+// @version      0.4.6
 // @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
@@ -17,6 +17,8 @@
 // @match        https://juejin.cn/**
 // @match        https://*.nowcoder.com/**
 // @match        https://*.mbalib.com/**
+// @match        http://www.360doc.com/**
+// @match        https://www.360doc.com/**
 // @grant        none
 // ==/UserScript==
 
@@ -60,6 +62,14 @@ function do_juejin(){
 		targets[i].oncopy=(e)=>{e.stopPropagation();};
 	}
 }
+
+function do_360doc(){
+	var targets=document.querySelectorAll('div.doc360article_content');
+	for(let i=0;i<targets.length;i++){
+		targets[i].oncopy=(e)=>{e.stopPropagation();};
+	}
+}
+
 
 function do_bilibili(){
 
@@ -116,6 +126,8 @@ function do_bilibili(){
 		do_bilibili();
 	}else if(location.href.match("https://juejin.cn")!=null){
 		do_juejin();
+	}else if(location.href.match("https?//www.360doc.com")!=null){
+		do_360doc();
 	}else{
 		document.body.oncopy=(e)=>{e.stopPropagation();};
 		//document.documentElement.addEventListener('copy',function(e){e.stopImmediatePropagation()});
