@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         douban 备用点赞
-// @namespace    http://tampermonkey.net/
+// @namespace    https://github.com/harryhare
 // @version      0.0.1
 // @description  豆瓣广播详情页点赞坏掉，增加备用点赞按钮
 // @author       harryhare
