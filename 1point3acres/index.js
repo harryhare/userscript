@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         一亩三分地 Anti Anti Adblock
+// @name         一亩三分地 Anti-Adblock-Detector
 // @namespace    http://tampermonkey.net/
-// @version      0.0.1
+// @version      0.0.2
 // @description  在开启Adblock 插件后，浏览网站会出现烦人的弹窗，这个插件会抑制弹窗出现
 // @author       harryhare
 // @license      GPL 3.0
