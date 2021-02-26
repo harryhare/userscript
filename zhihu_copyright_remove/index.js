@@ -78,7 +78,8 @@ function do_bilibili(){
 	async function clean(e) {
 		e.preventDefault();
 		//可能有用
-		// e.stopImmediatePropagation(); // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
+		 e.stopImmediatePropagation();
+		 // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
 		var copytext = window.getSelection().toString();
 		//console.log(await navigator.clipboard.readText());
 		await navigator.clipboard.writeText(window.getSelection().toString());
