@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         Restore Clipboard ( 剪贴板消毒，去掉版权信息 ) 
+// @name         Restore Clipboard ( 剪贴板消毒，去掉版权信息 )
 // @namespace    https://github.com/harryhare
-// @version      0.4.6
+// @version      0.4.7
 // @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
@@ -19,6 +19,7 @@
 // @match        https://*.mbalib.com/**
 // @match        http://www.360doc.com/**
 // @match        https://www.360doc.com/**
+// @match        https://*.geekbang.org/**
 // @grant        none
 // ==/UserScript==
 
@@ -71,6 +72,7 @@ function do_360doc(){
 }
 
 
+
 function do_bilibili(){
 
 	async function clean(e) {
@@ -108,12 +110,98 @@ function do_bilibili(){
 	for(let i=0;i<targets.length;i++){
 		targets[i].oncopy=clean;
 	}
-	
-	// 没有效果
+
+    // 因为B站js函数中有这样的代码，
+    //    i.preventDefault(),
+	//	  i.stopPropagation()
+	// 所以直接在body上面家 listener 没有效果
 	// document.body.addEventListener('copy', clean);
 	// document.body.oncopy=clean;
 }
 
+
+function do_geekbang(){
+    var last_selection;
+    var last_selection_string;
+    var last_selection_range=[];
+    var last_change_is_copy=false;
+    document.onselectionchange=(e)=>{
+        console.log("on selection changed");
+        if(last_change_is_copy==true){
+            console.log("the fake change!")
+            last_change_is_copy=false;
+            return;
+        }
+        last_selection=window.getSelection();
+        // 这句报错不知道怎么做申拷贝
+        //last_selection=Object.assign({},window.getSelection());
+        console.log(last_selection.toString());
+        last_selection_string=""+last_selection.toString();
+        last_selection_range=[];
+        for(var i=0;i<last_selection.rangeCount;i++){
+           last_selection_range.push(last_selection.getRangeAt(i));
+        }
+
+    }
+
+	async function clean(e) {
+        // 由于 增加版权声明的代码中有这样的代码
+        // var e = window.getSelection(),
+        // e.selectAllChildren(s),
+        // 这里这句为了防止错误的保存这次变化
+        last_change_is_copy=true;
+
+        // window.getSelection() 要用copy，深拷贝才行
+        //console.log(last_selection==window.getSelection());
+
+        //此方法可以缓解问题，但是会导致只能复制到单个element 的内容
+        //window.getSelection().selectAllChildren(e.target);
+
+        var currnent_selection=window.getSelection();
+        currnent_selection.removeAllRanges();
+        for(var i=0;i<last_selection_range.length;i++){
+            currnent_selection.addRange(last_selection_range[0]);
+        }
+        // range 和 直接改clipboard 二选一， clipboard 的结果可以覆盖 window.getSelection() 的状态
+        //console.log("last_selection string");
+        //console.log(last_selection_string);
+		//await navigator.clipboard.writeText(last_selection_string);
+        //await navigator.clipboard.writeText("测试");
+	}
+    document.body.oncopy=clean;
+    /*
+    // 由于网站 js 中没有加
+    //  i.stopPropagation()
+    // 所以不用在同一层，只要在上层（body）处理就可以了
+    function callback(records){
+        records.map(function (record) {
+            if (record.addedNodes.length != 0) {
+                for(var i=0;i<record.addedNodes.length;i++){
+                    var node=record.addedNodes[i];
+                    if(node.className=="quiz-box"){
+                        var targets=node.querySelectorAll("div#article-content.richcontent");
+                        console.log(targets);
+                        for(let i=0;i<targets.length;i++){
+                            targets[i].oncopy=clean;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+
+    var mo = new MutationObserver(callback);
+
+	var option = {
+		'childList': true,
+		'subtree': true,
+	};
+
+	mo.observe(document.body, option);
+    */
+}
 
 
 (function() {
@@ -126,9 +214,11 @@ function do_bilibili(){
 		do_bilibili();
 	}else if(location.href.match("https://juejin.cn")!=null){
 		do_juejin();
-	}else if(location.href.match("https?//www.360doc.com")!=null){
+	}else if(location.href.match("https?://www.360doc.com")!=null){
 		do_360doc();
-	}else{
+	}else if(location.href.match("https://[a-z]+.geekbang.org")!=null){
+        do_geekbang();
+    }else{
 		document.body.oncopy=(e)=>{e.stopPropagation();};
 		//document.documentElement.addEventListener('copy',function(e){e.stopImmediatePropagation()});
 		//document.documentElement.addEventListener('copy',function(e){e.stopPropagation()});
