@@ -80,7 +80,7 @@ function do_bilibili(){
 		//可能有用
 		// e.stopImmediatePropagation(); // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
 		var copytext = window.getSelection().toString();
-		console.log(await navigator.clipboard.readText());
+		//console.log(await navigator.clipboard.readText());
 		await navigator.clipboard.writeText(window.getSelection().toString());
 
 
@@ -126,16 +126,16 @@ function do_geekbang(){
     var last_selection_range=[];
     var last_change_is_copy=false;
     document.onselectionchange=(e)=>{
-        console.log("on selection changed");
+        //console.log("on selection changed");
         if(last_change_is_copy==true){
-            console.log("the fake change!")
+            //console.log("the fake change!")
             last_change_is_copy=false;
             return;
         }
         last_selection=window.getSelection();
         // 这句报错不知道怎么做申拷贝
         //last_selection=Object.assign({},window.getSelection());
-        console.log(last_selection.toString());
+        //console.log(last_selection.toString());
         last_selection_string=""+last_selection.toString();
         last_selection_range=[];
         for(var i=0;i<last_selection.rangeCount;i++){
