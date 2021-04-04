@@ -59,10 +59,7 @@ function ban(user_id, node, callback) {
                 let buttons = buttons_map[user_id];
                 blacklist_set.add(user_id);
                 for (let i = 0; i < buttons.length; i++) {
-                    let b = buttons[i];
-                    if (b.id === user_id) {
-                        b.innerHTML = "已加入黑名单";
-                    }
+                    buttons[i].innerHTML = "已加入黑名单";
                 }
             } else {
                 node.innerHTML = "失败请重试";
@@ -87,10 +84,7 @@ function unban(user_id, node, callback) {
                 let buttons = buttons_map[user_id];
                 blacklist_set.delete(user_id);
                 for (let i = 0; i < buttons.length; i++) {
-                    let b = buttons[i];
-                    if (b.id === user_id) {
-                        b.innerHTML = "加入黑名单";
-                    }
+                    buttons[i].innerHTML = "加入黑名单";
                 }
             } else {
                 node.innerHTML = "失败请重试";
@@ -102,15 +96,15 @@ function unban(user_id, node, callback) {
 
 function add_to_blacklist(e) {
     if (e.target.innerHTML === "已加入黑名单") {
-        unban(e.target.id, e.target);
+        unban(e.target.getAttribute("user-id"), e.target);
     } else {
-        ban(e.target.id, e.target);
+        ban(e.target.getAttribute("user-id"), e.target);
     }
 }
 
 function get_blacklist_button(user_id, style) {
     let b = document.createElement('a');
-    b.id = user_id;
+    b.setAttribute("user-id", user_id);
     if (blacklist_set.has(user_id)) {
         b.innerHTML = '已加入黑名单';
     } else {
@@ -194,8 +188,8 @@ function process_reshare() {
         let item = items[i];
         let a = item.children[0];
         let user_id = get_user_id_from_url(a.href);
-        let b = get_blacklist_button(user_id,"margin-left:10px");
-        b.className="go-status";
+        let b = get_blacklist_button(user_id, "margin-left:10px");
+        b.className = "go-status";
         item.insertBefore(b, item.children[2]);
     }
 }
