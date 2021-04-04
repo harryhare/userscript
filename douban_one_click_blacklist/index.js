@@ -271,9 +271,53 @@ function process_note_collect() {
     mo.observe(document.body, option);
 
 }
-// 收藏-广播
+// 收藏-广播,广播的收藏也是动态的
 function process_status_collect() {
+    function process_item(item){
+        let a = item.children[0];
+        let user_id = get_user_id_from_url(a.href);
+        let b = get_blacklist_button(
+            user_id,
+            "float: right; color: #fff; background:#bbb; opacity: 0;"
+        );
+        b.onmouseover = (e) => {
+            e.target.style.opacity = 1;
+        };
+        b.onmouseout = (e) => {
+            e.target.style.opacity = 0;
+        };
+        item.append(b);
+    }
+    let items = document.querySelectorAll("li div.content");
+    for (let i = 0; i < items.length; i++) {
+        process_item(items[i]);
+    }
+    function callback(records) {
+        records.map(function (record) {
+            if (record.addedNodes.length !== 0) {
+                for (var i = 0; i < record.addedNodes.length; i++) {
+                    var node = record.addedNodes[i];
+                    console.log(node.tagName);
+                    if (node.tagName.toLocaleLowerCase() === "ul") {
+                        console.log(node);
+                        var items = node.querySelectorAll("li div.content");
+                        console.log(items);
+                        for (let i = 0; i < items.length; i++) {
+                            process_item(items[i]);
+                        }
+                    }
+                }
+            }
+        });
+    }
 
+    var mo = new MutationObserver(callback);
+
+    var option = {
+        'childList': true,
+        'subtree': true,
+    };
+    mo.observe(document.body, option);
 }
 
 (function () {
