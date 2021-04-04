@@ -188,7 +188,7 @@ function process_like() {
 
 }
 
-// 转发
+// 转发 - 广播
 function process_reshare() {
     let items = document.querySelectorAll("li .content");
     for (let i = 0; i < items.length; i++) {
@@ -197,6 +197,27 @@ function process_reshare() {
         let user_id = get_user_id_from_url(a.href);
         let b = get_blacklist_button(user_id, "margin-left:10px");
         b.className = "go-status";
+        item.insertBefore(b, item.children[2]);
+    }
+}
+
+// 转发 - 日志
+function process_rec() {
+    let items = document.querySelectorAll("li .content");
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let a = item.children[0];
+        let user_id = get_user_id_from_url(a.href);
+        let b = get_blacklist_button(
+            user_id,
+            "position: absolute; top: 10px; right: 140px; color: #fff; background:#bbb; opacity: 0;"
+        );
+        b.onmouseover = (e) => {
+            e.target.style.opacity = 1;
+        };
+        b.onmouseout = (e) => {
+            e.target.style.opacity = 0;
+        };
         item.insertBefore(b, item.children[2]);
     }
 }
@@ -231,13 +252,15 @@ function process_collect() {
     }
 
     let tab_mode = "comment";
-    if (arg.indexOf("tab=comment") !== -1) {
+    if (arg.indexOf("comment") !== -1) {
         tab_mode = "comment";
-    } else if (arg.indexOf("tab=like") !== -1) {
+    } else if (arg.indexOf("like") !== -1) {
         tab_mode = "like";
     } else if (arg.indexOf("tab=reshare") !== -1) {
-        tab_mode = "reshare";
-    } else if (arg.indexOf("tab=collect") !== -1) {
+        tab_mode = "reshare"; //for status
+    } else if (arg.indexOf("type=rec") !== -1) {
+        tab_mode = "rec"; // for note
+    } else if (arg.indexOf("collect") !== -1) {
         tab_mode = "collect";
     }
 
@@ -248,6 +271,8 @@ function process_collect() {
         process_like();
     } else if (tab_mode === "reshare") {
         process_reshare();
+    } else if (tab_mode === "rec") {
+        process_rec();
     } else if (tab_mode === "collect") {
         process_collect();
     }
