@@ -108,7 +108,7 @@ function add_to_blacklist(e) {
     }
 }
 
-function get_blacklist_button_comment(user_id) {
+function get_blacklist_button(user_id, style) {
     let b = document.createElement('a');
     b.id = user_id;
     if (blacklist_set.has(user_id)) {
@@ -116,7 +116,7 @@ function get_blacklist_button_comment(user_id) {
     } else {
         b.innerHTML = '加入黑名单';
     }
-    b.style = "margin-left:10px";
+    b.style = style;
     b.onclick = add_to_blacklist;
     if (user_id in buttons_map) {
         buttons_map[user_id].push(b);
@@ -126,18 +126,22 @@ function get_blacklist_button_comment(user_id) {
     return b
 }
 
+function get_user_id_from_url(href) {
+    if (href[href.length - 1] === "/") {
+        href = href.substr(0, href.length - 1)
+    }
+    const j = href.lastIndexOf("/");
+    return href.substr(j + 1, href.length - j);
+}
+
 // 评论
 function process_comment() {
     function process_meta_header(item) {
         let a = item.children[0];
         let href = a.href;
         let name = a.title;
-        if (href[href.length - 1] === "/") {
-            href = href.substr(0, href.length - 1)
-        }
-        const j = href.lastIndexOf("/");
-        let user_id = href.substr(j + 1, href.length - j);
-        let b = get_blacklist_button_comment(user_id);
+        let user_id = get_user_id_from_url(a.href);
+        let b = get_blacklist_button(user_id, "margin-left:10px");
         // 如果回复已被投诉则没有投诉那一排按钮
         action_bars = item.parentElement.querySelectorAll("div.action-bar-group");
         if (action_bars.length > 0) {
@@ -168,7 +172,6 @@ function process_comment() {
         });
     }
 
-
     var mo = new MutationObserver(callback);
 
     var option = {
@@ -185,8 +188,16 @@ function process_like() {
 }
 
 // 转发
-function process_rec() {
-
+function process_reshare() {
+    let items = document.querySelectorAll("li .content");
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let a = item.children[0];
+        let user_id = get_user_id_from_url(a.href);
+        let b = get_blacklist_button(user_id,"margin-left:10px");
+        b.className="go-status";
+        item.insertBefore(b, item.children[2]);
+    }
 }
 
 // 收藏
@@ -223,19 +234,19 @@ function process_collect() {
         tab_mode = "comment";
     } else if (arg.indexOf("tab=like") !== -1) {
         tab_mode = "like";
-    } else if (arg.indexOf("tab=rec") !== -1) {
-        tab_mode = "rec";
+    } else if (arg.indexOf("tab=reshare") !== -1) {
+        tab_mode = "reshare";
     } else if (arg.indexOf("tab=collect") !== -1) {
         tab_mode = "collect";
     }
 
-
+    console.log(tab_mode);
     if (tab_mode === "comment") {
         process_comment();
     } else if (tab_mode === "like") {
         process_like();
-    } else if (tab_mode === "rec") {
-        process_rec();
+    } else if (tab_mode === "reshare") {
+        process_reshare();
     } else if (tab_mode === "collect") {
         process_collect();
     }
