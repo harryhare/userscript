@@ -14,6 +14,7 @@
 
 var i = 0;
 var buttons_map = {};//userid,buttons list
+var blacklist_set = new Set();
 var ck = "";
 var url_ban = "/j/contact/addtoblacklist";
 var url_unban = "/j/contact/unban";
@@ -43,10 +44,10 @@ var button_list = [];
 var cur = 0;
 
 
-function ban(userid, node, callback) {
+function ban(user_id, node, callback) {
     var xmlhttp = new XMLHttpRequest();
     var url = url_ban;
-    var data = "people=" + userid + "&ck=" + ck;
+    var data = "people=" + user_id + "&ck=" + ck;
     console.log('ban:', data);
     node.innerHTML = '正在加入黑名单...';
     xmlhttp.open("POST", url, true);
@@ -55,10 +56,11 @@ function ban(userid, node, callback) {
         if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
                 //node.innerHTML = "已加入黑名单";
-                let buttons = buttons_map[userid];
+                let buttons = buttons_map[user_id];
+                blacklist_set.add(user_id);
                 for (let i = 0; i < buttons.length; i++) {
                     let b = buttons[i];
-                    if (b.id === userid) {
+                    if (b.id === user_id) {
                         b.innerHTML = "已加入黑名单";
                     }
                 }
@@ -70,15 +72,63 @@ function ban(userid, node, callback) {
     xmlhttp.send(data);
 }
 
+function unban(user_id, node, callback) {
+    var xmlhttp = new XMLHttpRequest();
+    var url = url_unban;
+    var data = "people=" + user_id + "&ck=" + ck;
+    console.log('unban:', data);
+    node.innerHTML = '正在移除黑名单...';
+    xmlhttp.open("POST", url, true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) {
+            if (xmlhttp.status === 200) {
+                //node.innerHTML = "已加入黑名单";
+                let buttons = buttons_map[user_id];
+                blacklist_set.delete(user_id);
+                for (let i = 0; i < buttons.length; i++) {
+                    let b = buttons[i];
+                    if (b.id === user_id) {
+                        b.innerHTML = "加入黑名单";
+                    }
+                }
+            } else {
+                node.innerHTML = "失败请重试";
+            }
+        }
+    };
+    xmlhttp.send(data);
+}
+
 function add_to_blacklist(e) {
-    ban(e.target.id, e.target)
+    if (e.target.innerHTML === "已加入黑名单") {
+        unban(e.target.id, e.target);
+    } else {
+        ban(e.target.id, e.target);
+    }
+}
+
+function get_blacklist_button_comment(user_id) {
+    let b = document.createElement('a');
+    b.id = user_id;
+    if (blacklist_set.has(user_id)) {
+        b.innerHTML = '已加入黑名单';
+    } else {
+        b.innerHTML = '加入黑名单';
+    }
+    b.style = "margin-left:10px";
+    b.onclick = add_to_blacklist;
+    if (user_id in buttons_map) {
+        buttons_map[user_id].push(b);
+    } else {
+        buttons_map[user_id] = [b];
+    }
+    return b
 }
 
 // 评论
 function process_comment() {
-    let items = document.querySelectorAll("div.item .meta-header");
-    for (let i = 0; i < items.length; i++) {
-        let item = items[i];
+    function process_meta_header(item) {
         let a = item.children[0];
         let href = a.href;
         let name = a.title;
@@ -87,23 +137,46 @@ function process_comment() {
         }
         const j = href.lastIndexOf("/");
         let user_id = href.substr(j + 1, href.length - j);
-        let b = document.createElement('a');
-        b.id = user_id;
-        b.innerHTML = '加入黑名单';
-        b.style = "margin-left:10px";
-        b.onclick = add_to_blacklist;
+        let b = get_blacklist_button_comment(user_id);
         // 如果回复已被投诉则没有投诉那一排按钮
         action_bars = item.parentElement.querySelectorAll("div.action-bar-group");
         if (action_bars.length > 0) {
             action_bars[0].append(b);
-
-            if (user_id in buttons_map) {
-                buttons_map[user_id].push(b);
-            } else {
-                buttons_map[user_id] = [b];
-            }
         }
     }
+
+    let items = document.querySelectorAll("div.item .meta-header");
+    for (let i = 0; i < items.length; i++) {
+        process_meta_header(items[i]);
+    }
+
+    function callback(records) {
+        records.map(function (record) {
+            if (record.addedNodes.length !== 0) {
+                for (var i = 0; i < record.addedNodes.length; i++) {
+                    var node = record.addedNodes[i];
+                    if (node.className === "item reply-item") {//meta-head不行
+                        console.log(node);
+                        var items = node.querySelectorAll("div.item .meta-header");
+                        console.log(items);
+                        for (let i = 0; i < items.length; i++) {
+                            process_meta_header(items[i]);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
+    var mo = new MutationObserver(callback);
+
+    var option = {
+        'childList': true,
+        'subtree': true,
+    };
+
+    mo.observe(document.body, option);
 }
 
 // 点赞
