@@ -23,6 +23,13 @@ var url_unban = "/j/contact/unban";
 var interval = 2000;
 var interval_id;
 
+
+const ban_text = "加入黑名单";
+const unban_text = "移出黑名单";
+const banning_text = "正在加入黑名单...";
+const unbanning_text = "正在移出黑名单...";
+const error_text = "失败请重试";
+
 function getCookie(c_name) {
     if (document.cookie.length > 0) {
         var c_start = document.cookie.indexOf(c_name + "=");
@@ -49,7 +56,7 @@ function ban(user_id, node, callback) {
     var url = url_ban;
     var data = "people=" + user_id + "&ck=" + ck;
     console.log('ban:', data);
-    node.innerHTML = '正在加入黑名单...';
+    node.innerHTML = banning_text;
     xmlhttp.open("POST", url, true);
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xmlhttp.onreadystatechange = function () {
@@ -59,10 +66,10 @@ function ban(user_id, node, callback) {
                 let buttons = buttons_map[user_id];
                 blacklist_set.add(user_id);
                 for (let i = 0; i < buttons.length; i++) {
-                    buttons[i].innerHTML = "已加入黑名单";
+                    buttons[i].innerHTML = unban_text;
                 }
             } else {
-                node.innerHTML = "失败请重试";
+                node.innerHTML = error_text;
             }
         }
     };
@@ -74,7 +81,7 @@ function unban(user_id, node, callback) {
     var url = url_unban;
     var data = "people=" + user_id + "&ck=" + ck;
     console.log('unban:', data);
-    node.innerHTML = '正在移除黑名单...';
+    node.innerHTML = unbanning_text;
     xmlhttp.open("POST", url, true);
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xmlhttp.onreadystatechange = function () {
@@ -84,10 +91,10 @@ function unban(user_id, node, callback) {
                 let buttons = buttons_map[user_id];
                 blacklist_set.delete(user_id);
                 for (let i = 0; i < buttons.length; i++) {
-                    buttons[i].innerHTML = "加入黑名单";
+                    buttons[i].innerHTML = ban_text;
                 }
             } else {
-                node.innerHTML = "失败请重试";
+                node.innerHTML = error_text;
             }
         }
     };
@@ -95,7 +102,7 @@ function unban(user_id, node, callback) {
 }
 
 function add_to_blacklist(e) {
-    if (e.target.innerHTML === "已加入黑名单") {
+    if (e.target.innerHTML === unban_text) {
         unban(e.target.getAttribute("user-id"), e.target);
     } else {
         ban(e.target.getAttribute("user-id"), e.target);
@@ -106,9 +113,9 @@ function get_blacklist_button(user_id, style) {
     let b = document.createElement('a');
     b.setAttribute("user-id", user_id);
     if (blacklist_set.has(user_id)) {
-        b.innerHTML = '已加入黑名单';
+        b.innerHTML = unban_text;
     } else {
-        b.innerHTML = '加入黑名单';
+        b.innerHTML = ban_text;
     }
     b.style = style;
     b.onclick = add_to_blacklist;

@@ -10,4 +10,3 @@
 * 回复（item-> 按钮，有更新，init + 监听element 变动）done
 
 * 按钮文字常量化
-* button.id->userid
