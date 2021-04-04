@@ -137,7 +137,7 @@ function get_user_id_from_url(href) {
 
 // 评论
 function process_comment() {
-    function process_meta_header(item) {
+    function process_item(item) {
         let a = item.children[0];
         let href = a.href;
         let name = a.title;
@@ -152,7 +152,7 @@ function process_comment() {
 
     let items = document.querySelectorAll("div.item .meta-header");
     for (let i = 0; i < items.length; i++) {
-        process_meta_header(items[i]);
+        process_item(items[i]);
     }
 
     function callback(records) {
@@ -161,11 +161,11 @@ function process_comment() {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
                     if (node.className === "item reply-item") {//meta-head不行
-                        console.log(node);
+                        //console.log(node);
                         var items = node.querySelectorAll("div.item .meta-header");
-                        console.log(items);
+                        //console.log(items);
                         for (let i = 0; i < items.length; i++) {
-                            process_meta_header(items[i]);
+                            process_item(items[i]);
                         }
                     }
                 }
@@ -222,11 +222,59 @@ function process_rec() {
     }
 }
 
-// 收藏
-function process_collect() {
+// 收藏-日志, 日志的收藏是动态加载的
+function process_note_collect() {
+    function process_item(item){
+        let a = item.children[0];
+        let user_id = get_user_id_from_url(a.href);
+        let b = get_blacklist_button(
+            user_id,
+            "position: absolute; top: 10px; right: 140px; color: #fff; background:#bbb; opacity: 0;"
+        );
+        b.onmouseover = (e) => {
+            e.target.style.opacity = 1;
+        };
+        b.onmouseout = (e) => {
+            e.target.style.opacity = 0;
+        };
+        item.insertBefore(b, item.children[2]);
+    }
+    let items = document.querySelectorAll("li div.content");
+    for (let i = 0; i < items.length; i++) {
+        process_item(items[i]);
+    }
+    function callback(records) {
+        records.map(function (record) {
+            if (record.addedNodes.length !== 0) {
+                for (var i = 0; i < record.addedNodes.length; i++) {
+                    var node = record.addedNodes[i];
+                    console.log(node.tagName);
+                    if (node.tagName.toLocaleLowerCase() === "ul") {
+                        console.log(node);
+                        var items = node.querySelectorAll("li div.content");
+                        console.log(items);
+                        for (let i = 0; i < items.length; i++) {
+                            process_item(items[i]);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    var mo = new MutationObserver(callback);
+
+    var option = {
+        'childList': true,
+        'subtree': true,
+    };
+    mo.observe(document.body, option);
 
 }
+// 收藏-广播
+function process_status_collect() {
 
+}
 
 (function () {
     'use strict';
@@ -260,8 +308,10 @@ function process_collect() {
         tab_mode = "reshare"; //for status
     } else if (arg.indexOf("type=rec") !== -1) {
         tab_mode = "rec"; // for note
-    } else if (arg.indexOf("collect") !== -1) {
-        tab_mode = "collect";
+    } else if (arg.indexOf("type=collect") !== -1) {
+        tab_mode = "note_collect";
+    } else if (arg.indexOf("tab=collect") !== -1) {
+        tab_mode = "status_collect";
     }
 
     console.log(tab_mode);
@@ -273,7 +323,9 @@ function process_collect() {
         process_reshare();
     } else if (tab_mode === "rec") {
         process_rec();
-    } else if (tab_mode === "collect") {
-        process_collect();
+    } else if (tab_mode === "note_collect") {
+        process_note_collect();
+    } else if (tab_mode === "status_collect") {
+        process_status_collect();
     }
 })();
