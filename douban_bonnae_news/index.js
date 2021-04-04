@@ -81,7 +81,7 @@ function edit_page() {
 	url_prefix['upaste.me']='http://upaste.me/';
 	url_prefix['slexy.org']='https://slexy.org/view/';
 	url_prefix['paste2.org']='https://paste2.org/';
-	url_prefix['paste.ee']='https://paste.ee/p/'
+	url_prefix['paste.ee']='https://paste.ee/p/';
 	const default_prefix='upaste.me';
 	const max_code_length=100;
 

@@ -5,15 +5,15 @@
 // @description  add button to douban to delete follower
 // @author       harryhare
 // @license      GPL 3.0
-// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_follower_delete/index.js
+// @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_one_click_blacklist/index.js
 // @icon         https://raw.githubusercontent.com/harryhare/userscript/master/index.png
-// @match        https://www.douban.com/contacts/rlist**
+// @match        https://www.douban.com/**
 // @grant        none
 // ==/UserScript==
 
 
 var i = 0;
-var button;
+var buttons_map = {};//userid,buttons list
 var ck = "";
 var url_ban = "/j/contact/addtoblacklist";
 var url_unban = "/j/contact/unban";
@@ -43,22 +43,36 @@ var button_list = [];
 var cur = 0;
 
 
-function ban(userid, name, node, href) {
+function ban(userid, node, callback) {
     var xmlhttp = new XMLHttpRequest();
     var url = url_ban;
     var data = "people=" + userid + "&ck=" + ck;
     console.log('ban:', data);
-    node.innerHTML = "<a href='" + href + "'>正在ban:" + name + "</a>";
-    xmlhttp.open("POST", url, asyn);
+    node.innerHTML = '正在加入黑名单...';
+    xmlhttp.open("POST", url, true);
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-
+        if (xmlhttp.readyState === 4) {
+            if (xmlhttp.status === 200) {
+                //node.innerHTML = "已加入黑名单";
+                let buttons = buttons_map[userid];
+                for (let i = 0; i < buttons.length; i++) {
+                    let b = buttons[i];
+                    if (b.id === userid) {
+                        b.innerHTML = "已加入黑名单";
+                    }
+                }
+            } else {
+                node.innerHTML = "失败请重试";
+            }
         }
     };
     xmlhttp.send(data);
 }
 
+function add_to_blacklist(e) {
+    ban(e.target.id, e.target)
+}
 
 // 评论
 function process_comment() {
@@ -74,25 +88,21 @@ function process_comment() {
         const j = href.lastIndexOf("/");
         let user_id = href.substr(j + 1, href.length - j);
         let b = document.createElement('a');
-        //b.class = "a-btn-add mr10 add_contact";
-        //b.class = "react-btn";
-        //b.class="action-bar-group";
-        //b.class="report-comment-btn";
         b.id = user_id;
         b.innerHTML = '加入黑名单';
-        //b.onclick = click_unfollow;
-        //b.style = "align: right;";
-        b.onmouseover = (e) => {
-            e.target.style.opacity = 1;
-            //e.target.style.visibility = visible;
-        };
-        b.onmouseout = (e) => {
-            e.target.style.opacity = 0;
-            //e.target.style.visibility = hidden;
-        };
-        b.style = "float: right; opacity: 0;";
-        //b.style = "float: right; visibility: hidden;"; // 点不到
-        item.append(b);
+        b.style = "margin-left:10px";
+        b.onclick = add_to_blacklist;
+        // 如果回复已被投诉则没有投诉那一排按钮
+        action_bars = item.parentElement.querySelectorAll("div.action-bar-group");
+        if (action_bars.length > 0) {
+            action_bars[0].append(b);
+
+            if (user_id in buttons_map) {
+                buttons_map[user_id].push(b);
+            } else {
+                buttons_map[user_id] = [b];
+            }
+        }
     }
 }
 
@@ -118,7 +128,10 @@ function process_collect() {
     ck = getCookie("ck");
     let url = window.location.href;
     url = url.replace("#sep", "");
-    const i = url.indexOf("?");
+    let i = url.indexOf("?");
+    if (i === -1) {
+        i = url.length;
+    }
     const page = url.substr(0, i);
     const arg = url.substr(i + 1, url.length - i);
     const status_reg = /https:\/\/www\.douban\.com\/people\/[^\/]+\/status\/\d+\//g;

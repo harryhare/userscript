@@ -66,7 +66,7 @@ function getContent(response){
 }
 
 function attachContent(response){
-	if(response.status!=200){
+	if(response.status!==200){
 		return;
 	}
 	if(!url_node[response.finalUrl]){
