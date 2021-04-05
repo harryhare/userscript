@@ -286,7 +286,7 @@ async function do_blacklist_page(url, t) {
         let user_id = get_user_id_from_url(a.href);
         //console.log(`拉黑${user_id}`);
         await ban_simple(user_id);
-        t.innerHTML = `${str},该页已完成 ${i + 1}/${items.length}`;
+        t.innerHTML = `${str}, 该页已完成 ${i + 1}/${items.length}`;
         await sleep(interval);
     }
     return items.length;// 返回该页的人数
