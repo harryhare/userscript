@@ -15,8 +15,8 @@ var buttons_map = {};//userid,buttons list
 var blacklist_set = new Set();
 var ck = "";
 var page_url = "";
-var url_ban = "/j/contact/addtoblacklist";
-var url_unban = "/j/contact/unban";
+var url_ban = "https://www.douban.com/j/contact/addtoblacklist";
+var url_unban = "https://www.douban.com/j/contact/unban";
 
 //time delay
 var interval = 2000;
@@ -270,7 +270,7 @@ async function do_blacklist_all_note_like(e) {
     let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 100) {
-        b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
+        b.innerHTML = `正在拉黑第 ${i / 100 + 1} 页`;
         let url = `${page_url}?start=${i}&type=like#sep`;
         let n = await do_blacklist_page(url, e.target);
         if (n === 0) {
@@ -287,7 +287,7 @@ async function do_blacklist_all_note_donate(e) {
     let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 100) {
-        b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
+        b.innerHTML = `正在拉黑第 ${i / 100 + 1} 页`;
         let url = `${page_url}?start=${i}&type=donate#sep`;
         let n = await do_blacklist_page(url, e.target);
         if (n === 0) {
