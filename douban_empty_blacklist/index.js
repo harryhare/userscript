@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         empty the blacklist
 // @namespace    https://github.com/harryhare/
-// @version      0.0.1
+// @version      0.0.2
 // @description  一键清空黑名单
 // @author       harryhare
 // @license      GPL 3.0
