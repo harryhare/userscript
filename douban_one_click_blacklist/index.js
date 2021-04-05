@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         douban one click blacklist
 // @namespace    https://github.com/harryhare/
-// @version      0.0.1
+// @version      0.0.2
 // @description  add button to douban to delete follower
 // @author       harryhare
 // @license      GPL 3.0
@@ -137,6 +137,11 @@ function get_blacklist_button(user_id, style) {
     return b
 }
 
+function check_user_link(href) {
+    const status_reg = /https:\/\/www\.douban\.com\/people\/[^\/]+\/?$/;
+    return status_reg.test(href);
+}
+
 function get_user_id_from_url(href) {
     if (href[href.length - 1] === "/") {
         href = href.substr(0, href.length - 1)
@@ -230,16 +235,20 @@ async function do_blacklist_page(url, t) {
     for (let i = 0; i < items.length; i++) {
         let item = items[i];
         let a = item.children[0];
+        // 如果不是 https://www.douban/people/xxx 的形式，那么就是匿名用户
+        if (check_user_link(a.href) === false) {
+            continue;
+        }
         let user_id = get_user_id_from_url(a.href);
         //console.log(`拉黑${user_id}`);
-        t.innerHTML = `${str},该页已完成 ${i}/${items.length}`;
         ban_simple(user_id);
+        t.innerHTML = `${str},该页已完成 ${i + 1}/${items.length}`;
         await sleep(interval);
     }
     return items.length;// 返回该页的人数
 }
 
-async function do_blacklist_all_status(e) {
+async function do_blacklist_all_status_like(e) {
     let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 20) {
@@ -251,28 +260,63 @@ async function do_blacklist_all_status(e) {
             break;
         } else if (n === -1) {
             b.innerHTML = '失败请重试';
+            break;
         }
         await sleep(interval);
     }
 }
 
-async function do_blacklist_all_note(e) {
+async function do_blacklist_all_note_like(e) {
     let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 100) {
         b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
-        let url = `${page_url}?start=${i}&type=like#like`;
+        let url = `${page_url}?start=${i}&type=like#sep`;
         let n = await do_blacklist_page(url, e.target);
         if (n === 0) {
             b.innerHTML = `已全部拉黑`;
             break;
         } else if (n === -1) {
             b.innerHTML = '失败请重试';
+            break;
         }
     }
 }
 
-// 点赞
+async function do_blacklist_all_note_donate(e) {
+    let b = e.target;
+    console.log("blacklist all...");
+    for (let i = 0; ; i += 100) {
+        b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
+        let url = `${page_url}?start=${i}&type=donate#sep`;
+        let n = await do_blacklist_page(url, e.target);
+        if (n === 0) {
+            b.innerHTML = `已全部拉黑`;
+            break;
+        } else if (n === -1) {
+            b.innerHTML = '失败请重试';
+            break;
+        }
+    }
+}
+
+// 打赏 - 日志
+function process_note_donate() {
+    let tabs = document.querySelector("div.tabs");
+    let b = document.createElement('a');
+    b.innerHTML = "一键拉黑所有赞赏的人";
+    b.style = "float: right; font-size: 13px; line-height: 1.2; color: #fff; background:#bbb; opacity: 1;";
+    // b.onmouseover = (e) => {
+    //     e.target.style.opacity = 1;
+    // };
+    // b.onmouseout = (e) => {
+    //     e.target.style.opacity = 0;
+    // };
+    b.onclick = do_blacklist_all_note_donate;
+    tabs.append(b);
+}
+
+// 点赞 - 日志
 function process_note_like() {
     let tabs = document.querySelector("div.tabs");
     let b = document.createElement('a');
@@ -284,10 +328,11 @@ function process_note_like() {
     // b.onmouseout = (e) => {
     //     e.target.style.opacity = 0;
     // };
-    b.onclick = do_blacklist_all_note;
+    b.onclick = do_blacklist_all_note_like;
     tabs.append(b);
 }
 
+// 点赞 - 广播
 function process_status_like() {
     let tabs = document.querySelector("div.tabs");
     let b = document.createElement('a');
@@ -299,7 +344,7 @@ function process_status_like() {
     // b.onmouseout = (e) => {
     //     e.target.style.opacity = 0;
     // };
-    b.onclick = do_blacklist_all_status;
+    b.onclick = do_blacklist_all_status_like;
     tabs.append(b);
 }
 
@@ -452,8 +497,8 @@ function process_status_collect() {
     }
     const page = url.substr(0, i);
     const arg = url.substr(i + 1, url.length - i);
-    const status_reg = /https:\/\/www\.douban\.com\/people\/[^\/]+\/status\/\d+\//g;
-    const note_reg = /https:\/\/www\.douban\.com\/note\/\d+\//g;
+    const status_reg = /https:\/\/www\.douban\.com\/people\/[^\/]+\/status\/\d+\/$/g;
+    const note_reg = /https:\/\/www\.douban\.com\/note\/\d+\/$/g;
     let page_mode = "None";
     if (status_reg.test(page)) {
         page_mode = "status";
@@ -479,6 +524,8 @@ function process_status_collect() {
         tab_mode = "note_collect";
     } else if (arg.indexOf("tab=collect") !== -1) {
         tab_mode = "status_collect";
+    } else if (arg.indexOf("type=donate") !== -1) {
+        tab_mode = "note_donate";
     }
 
     console.log(tab_mode);
@@ -496,5 +543,7 @@ function process_status_collect() {
         process_note_collect();
     } else if (tab_mode === "status_collect") {
         process_status_collect();
+    } else if (tab_mode === "note_donate") {
+        process_note_donate();
     }
 })();
