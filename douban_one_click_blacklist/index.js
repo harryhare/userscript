@@ -44,27 +44,27 @@ function getCookie(c_name) {
     return "";
 }
 
-function ban_simple(user_id) {
-    user_id = get_real_user_id(user_id);
+async function ban_simple(user_name) {
+    let user_id = await get_real_user_id(user_name);
     var xmlhttp = new XMLHttpRequest();
     var data = "people=" + user_id + "&ck=" + ck;
     xmlhttp.open("POST", url_ban, true);
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     xmlhttp.onload = function () {
         if (this.status === 200) {
-            console.log(`拉黑${user_id}成功`);
+            console.log(`拉黑${user_name}成功`);
         } else {
-            console.log(`拉黑${user_id}失败`);
+            console.log(`拉黑${user_name}失败`);
         }
     };
     xmlhttp.onerror = function () {
-        console.log(`拉黑${user_id}失败`);
+        console.log(`拉黑${user_name}失败`);
     };
     xmlhttp.send(data);
 }
 
-function ban(user_id, node) {
-    user_id = get_real_user_id(user_id);
+async function ban(user_name, node) {
+    let user_id = await get_real_user_id(user_name);
     var xmlhttp = new XMLHttpRequest();
     var url = url_ban;
     var data = "people=" + user_id + "&ck=" + ck;
@@ -76,8 +76,8 @@ function ban(user_id, node) {
         if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
                 //node.innerHTML = "已加入黑名单";
-                let buttons = buttons_map[user_id];
-                blacklist_set.add(user_id);
+                let buttons = buttons_map[user_name];
+                blacklist_set.add(user_name);
                 for (let i = 0; i < buttons.length; i++) {
                     buttons[i].innerHTML = unban_text;
                 }
@@ -89,8 +89,8 @@ function ban(user_id, node) {
     xmlhttp.send(data);
 }
 
-function unban(user_id, node) {
-    user_id = get_real_user_id(user_id);
+async function unban(user_name, node) {
+    let user_id = await get_real_user_id(user_name);
     var xmlhttp = new XMLHttpRequest();
     var url = url_unban;
     var data = "people=" + user_id + "&ck=" + ck;
@@ -102,8 +102,8 @@ function unban(user_id, node) {
         if (xmlhttp.readyState === 4) {
             if (xmlhttp.status === 200) {
                 //node.innerHTML = "已加入黑名单";
-                let buttons = buttons_map[user_id];
-                blacklist_set.delete(user_id);
+                let buttons = buttons_map[user_name];
+                blacklist_set.delete(user_name);
                 for (let i = 0; i < buttons.length; i++) {
                     buttons[i].innerHTML = ban_text;
                 }
@@ -115,11 +115,11 @@ function unban(user_id, node) {
     xmlhttp.send(data);
 }
 
-function add_to_blacklist(e) {
+async function add_to_blacklist(e) {
     if (e.target.innerHTML === unban_text) {
-        unban(e.target.getAttribute("user-id"), e.target);
+        await unban(e.target.getAttribute("user-id"), e.target);
     } else {
-        ban(e.target.getAttribute("user-id"), e.target);
+        await ban(e.target.getAttribute("user-id"), e.target);
     }
 }
 
@@ -271,7 +271,7 @@ async function do_blacklist_page(url, t) {
         }
         let user_id = get_user_id_from_url(a.href);
         //console.log(`拉黑${user_id}`);
-        ban_simple(user_id);
+        await ban_simple(user_id);
         t.innerHTML = `${str},该页已完成 ${i + 1}/${items.length}`;
         await sleep(interval);
     }
@@ -441,10 +441,10 @@ function process_note_collect() {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
                     console.log(node.tagName);
-                    if (node.tagName.toLocaleLowerCase() === "ul") {
-                        console.log(node);
+                    if (node.tagName && node.tagName.toLowerCase() === "ul") {
+                        //console.log(node);
                         var items = node.querySelectorAll("li div.content");
-                        console.log(items);
+                        //console.log(items);
                         for (let i = 0; i < items.length; i++) {
                             process_item(items[i]);
                         }
@@ -493,7 +493,7 @@ function process_status_collect() {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
                     console.log(node.tagName);
-                    if (node.tagName.toLocaleLowerCase() === "ul") {
+                    if (node.tagName && node.tagName.toLowerCase() === "ul") {
                         //console.log(node);
                         var items = node.querySelectorAll("li div.content");
                         //console.log(items);
