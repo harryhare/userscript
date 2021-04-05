@@ -25,6 +25,9 @@
 ![](screenshots/blacklist_note_rec.png)
 ---
 ![](screenshots/blacklist_note_collect.png)
+---
+![](screenshots/blacklist_donate2.png)
+
 
 
 
