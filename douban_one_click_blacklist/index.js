@@ -12,6 +12,7 @@
 // ==/UserScript==
 
 var buttons_map = {};//userid,buttons list
+var user_id_map = {};
 var blacklist_set = new Set();
 var ck = "";
 var page_url = "";
@@ -44,6 +45,7 @@ function getCookie(c_name) {
 }
 
 function ban_simple(user_id) {
+    user_id = get_real_user_id(user_id);
     var xmlhttp = new XMLHttpRequest();
     var data = "people=" + user_id + "&ck=" + ck;
     xmlhttp.open("POST", url_ban, true);
@@ -61,7 +63,8 @@ function ban_simple(user_id) {
     xmlhttp.send(data);
 }
 
-function ban(user_id, node, callback) {
+function ban(user_id, node) {
+    user_id = get_real_user_id(user_id);
     var xmlhttp = new XMLHttpRequest();
     var url = url_ban;
     var data = "people=" + user_id + "&ck=" + ck;
@@ -86,7 +89,8 @@ function ban(user_id, node, callback) {
     xmlhttp.send(data);
 }
 
-function unban(user_id, node, callback) {
+function unban(user_id, node) {
+    user_id = get_real_user_id(user_id);
     var xmlhttp = new XMLHttpRequest();
     var url = url_unban;
     var data = "people=" + user_id + "&ck=" + ck;
@@ -202,6 +206,7 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+
 function makeRequest(url) {
     return new Promise(function (resolve, reject) {
         let xhr = new XMLHttpRequest();
@@ -226,10 +231,35 @@ function makeRequest(url) {
     });
 }
 
-async function do_blacklist_page(url, t) {
-    let reponse = await makeRequest(url);
+
+async function get_real_user_id(user_name) {
+    const user_id_reg = /^\d{6,}$/;
+    if (user_id_reg.test(user_name)) {
+        return user_name;
+    }
+    if (user_name in user_id_map) {
+        return user_id_map[user_name];
+    }
+    let url = `https://www.douban.com/people/${user_name}/`;
+    let response = await makeRequest(url);
     let parser = new window.DOMParser();
-    let xmlDoc = parser.parseFromString(reponse, "text/html");
+    let xmlDoc = parser.parseFromString(response, "text/html");
+    let user_id = xmlDoc.querySelector("div.user-opt a").id;
+
+    if (user_id === "ban-cancel") {
+        const user_id_reg2 = /\d{6,}/;
+        let div = xmlDoc.querySelector("div.user-opt script");
+        user_id = user_id_reg2.exec(div.text)[0];
+    }
+    user_id_map[user_name] = user_id;
+    return user_id;
+}
+
+
+async function do_blacklist_page(url, t) {
+    let response = await makeRequest(url);
+    let parser = new window.DOMParser();
+    let xmlDoc = parser.parseFromString(response, "text/html");
     let items = xmlDoc.querySelectorAll("li div.content");
     let str = t.innerHTML;
     for (let i = 0; i < items.length; i++) {
