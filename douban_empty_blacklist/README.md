@@ -8,7 +8,7 @@
 
 ### 使用
 
-见图片
+在黑名单管理页面可以看到按钮，具体见图片
 
 ![](screenshots/blacklist_empty1.png)
 ---
