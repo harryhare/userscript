@@ -454,7 +454,7 @@ function process_note_collect() {
             if (record.addedNodes.length !== 0) {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
-                    console.log(node.tagName);
+                    //console.log(node.tagName);
                     if (node.tagName && node.tagName.toLowerCase() === "ul") {
                         //console.log(node);
                         var items = node.querySelectorAll("li div.content");
@@ -506,7 +506,7 @@ function process_status_collect() {
             if (record.addedNodes.length !== 0) {
                 for (var i = 0; i < record.addedNodes.length; i++) {
                     var node = record.addedNodes[i];
-                    console.log(node.tagName);
+                    //console.log(node.tagName);
                     if (node.tagName && node.tagName.toLowerCase() === "ul") {
                         //console.log(node);
                         var items = node.querySelectorAll("li div.content");
