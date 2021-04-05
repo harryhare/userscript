@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         douban one click blacklist
 // @namespace    https://github.com/harryhare/
-// @version      0.0.2
+// @version      0.0.3
 // @description  add button to douban to delete follower
 // @author       harryhare
 // @license      GPL 3.0
@@ -16,8 +16,8 @@ var user_id_map = {};
 var blacklist_set = new Set();
 var ck = "";
 var page_url = "";
-var url_ban = "https://www.douban.com/j/contact/addtoblacklist";
-var url_unban = "https://www.douban.com/j/contact/unban";
+const url_ban = "https://www.douban.com/j/contact/addtoblacklist";
+const url_unban = "https://www.douban.com/j/contact/unban";
 
 //time delay
 var interval = 2000;
@@ -154,7 +154,7 @@ function get_user_id_from_url(href) {
     return href.substr(j + 1, href.length - j);
 }
 
-// 评论
+// 评论，日志和广播
 function process_comment() {
     function process_item(item) {
         let a = item.children[0];
@@ -200,6 +200,20 @@ function process_comment() {
     };
 
     mo.observe(document.body, option);
+}
+
+// 小组 回复
+function process_comment_group() {
+    let items = document.querySelectorAll("div.operation_div");
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let user_id = item.id;
+        let b = get_blacklist_button(user_id, "color: #aaa; margin-right:10px");
+        let containers = item.querySelectorAll("div.operation-more");
+        if(containers.length>0) {
+            containers[0].append(b);
+        }
+    }
 }
 
 function sleep(ms) {
@@ -527,13 +541,16 @@ function process_status_collect() {
     }
     const page = url.substr(0, i);
     const arg = url.substr(i + 1, url.length - i);
-    const status_reg = /https:\/\/www\.douban\.com\/people\/[^\/]+\/status\/\d+\/$/g;
-    const note_reg = /https:\/\/www\.douban\.com\/note\/\d+\/$/g;
+    const status_reg = /^https:\/\/www\.douban\.com\/people\/[^\/]+\/status\/\d+\/$/;
+    const note_reg = /^https:\/\/www\.douban\.com\/note\/\d+\/$/;
+    const group_reg = /^https:\/\/www\.douban\.com\/group\/topic\/\d+\/$/;
     let page_mode = "None";
     if (status_reg.test(page)) {
         page_mode = "status";
     } else if (note_reg.test(page)) {
         page_mode = "node";
+    } else if (group_reg.test(page)) {
+        page_mode = "group";
     } else {
         return;
     }
@@ -560,7 +577,11 @@ function process_status_collect() {
 
     console.log(tab_mode);
     if (tab_mode === "comment") {
-        process_comment();
+        if (page_mode === "group") {
+            process_comment_group();
+        } else {
+            process_comment();
+        }
     } else if (tab_mode === "note_like") {
         process_note_like();
     } else if (tab_mode === "status_like") {
