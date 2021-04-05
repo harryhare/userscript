@@ -8,6 +8,10 @@
 * 转发页 单人快速拉黑
 * 收藏页 单人快速拉黑
 
+### 代码地址
+
+[github.com/harryhare/userscirpt](https://github.com/harryhare/userscript/tree/master/douban_one_click_blacklist)
+
 ### 使用
 
 见图片
