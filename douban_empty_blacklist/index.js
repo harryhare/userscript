@@ -2,7 +2,7 @@
 // @name         empty the blacklist
 // @namespace    https://github.com/harryhare/
 // @version      0.0.1
-// @description  empty the blacklist
+// @description  一键清空黑名单
 // @author       harryhare
 // @license      GPL 3.0
 // @downloadURL  https://github.com/harryhare/userscript/raw/master/douban_empty_blacklist/index.js
@@ -11,7 +11,7 @@
 // @grant        none
 // ==/UserScript==
 
-let interval = 1000;
+let interval = 2000;
 
 function makeRequest(url) {
     return new Promise(function (resolve, reject) {
