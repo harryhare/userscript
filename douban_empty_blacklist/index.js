@@ -75,6 +75,7 @@ async function clean_all(e) {
         break;
     }
     e.target.innerHTML = `黑名单已清空`;
+    window.location="https://www.douban.com/contacts/blacklist";
 }
 
 (function () {
