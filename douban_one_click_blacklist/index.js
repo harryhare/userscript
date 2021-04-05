@@ -48,6 +48,16 @@ function ban_simple(user_id) {
     var data = "people=" + user_id + "&ck=" + ck;
     xmlhttp.open("POST", url_ban, true);
     xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onload = function () {
+        if (this.status === 200) {
+            console.log(`拉黑${user_id}成功`);
+        } else {
+            console.log(`拉黑${user_id}失败`);
+        }
+    };
+    xmlhttp.onerror = function () {
+        console.log(`拉黑${user_id}失败`);
+    };
     xmlhttp.send(data);
 }
 
@@ -144,7 +154,7 @@ function process_comment() {
         let user_id = get_user_id_from_url(a.href);
         let b = get_blacklist_button(user_id, "margin-left:10px");
         // 如果回复已被投诉则没有投诉那一排按钮
-        action_bars = item.parentElement.querySelectorAll("div.action-bar-group");
+        let action_bars = item.parentElement.querySelectorAll("div.action-bar-group");
         if (action_bars.length > 0) {
             action_bars[0].append(b);
         }
@@ -183,52 +193,76 @@ function process_comment() {
     mo.observe(document.body, option);
 }
 
-function do_blacklist_page(url) {
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.open("GET", url, true);
-    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-    xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState === 4) {
-            if (xmlhttp.status === 200) {
-                let parser = new window.DOMParser();
-                let xmlDoc = parser.parseFromString(xmlhttp.response, "text/html");
-                let items = xmlDoc.querySelectorAll("li div.content");
-                for (let i = 0; i < items.length; i++) {
-                    let item = items[i];
-                    let a = item.children[0];
-                    let user_id = get_user_id_from_url(a.href);
-                    console.log(`拉黑${user_id}`);
-                }
-            }
-        }
-    };
-    xmlhttp.send();
-    return 0;// 返回该页的人数
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-function do_blacklist_all_status(e) {
-    b = e.target;
+function makeRequest(url) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", url);
+        xhr.onload = function () {
+            if (this.status === 200) {
+                resolve(xhr.response);
+            } else {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+    });
+}
+
+async function do_blacklist_page(url, t) {
+    let reponse = await makeRequest(url);
+    let parser = new window.DOMParser();
+    let xmlDoc = parser.parseFromString(reponse, "text/html");
+    let items = xmlDoc.querySelectorAll("li div.content");
+    let str = t.innerHTML;
+    for (let i = 0; i < items.length; i++) {
+        let item = items[i];
+        let a = item.children[0];
+        let user_id = get_user_id_from_url(a.href);
+        //console.log(`拉黑${user_id}`);
+        t.innerHTML = `${str},该页已完成 ${i}/${items.length}`;
+        ban_simple(user_id);
+        await sleep(interval);
+    }
+    return items.length;// 返回该页的人数
+}
+
+async function do_blacklist_all_status(e) {
+    let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 20) {
-        b.innerHTML = `正在拉黑第${i / 20 + 1}页`;
-        url = `${page_url}?start=${i}&tab=like#like`;
-        let n = do_blacklist_page(url);
+        b.innerHTML = `正在拉黑第 ${i / 20 + 1} 页`;
+        let url = `${page_url}?start=${i}&tab=like#like`;
+        let n = await do_blacklist_page(url, e.target);
         if (n === 0) {
             b.innerHTML = `已全部拉黑`;
             break;
         } else if (n === -1) {
             b.innerHTML = '失败请重试';
         }
+        await sleep(interval);
     }
 }
 
-function do_blacklist_all_note(e) {
-    b = e.target;
+async function do_blacklist_all_note(e) {
+    let b = e.target;
     console.log("blacklist all...");
     for (let i = 0; ; i += 100) {
         b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
-        url = `${page_url}?start=${i}&type=like#like`;
-        let n = do_blacklist_page(url);
+        let url = `${page_url}?start=${i}&type=like#like`;
+        let n = await do_blacklist_page(url, e.target);
         if (n === 0) {
             b.innerHTML = `已全部拉黑`;
             break;
@@ -385,9 +419,9 @@ function process_status_collect() {
                     var node = record.addedNodes[i];
                     console.log(node.tagName);
                     if (node.tagName.toLocaleLowerCase() === "ul") {
-                        console.log(node);
+                        //console.log(node);
                         var items = node.querySelectorAll("li div.content");
-                        console.log(items);
+                        //console.log(items);
                         for (let i = 0; i < items.length; i++) {
                             process_item(items[i]);
                         }
