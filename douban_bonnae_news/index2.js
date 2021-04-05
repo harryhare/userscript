@@ -73,7 +73,7 @@ function attachContent(response){
 		return;
 	}
 	for(var i=0;i<url_node[response.finalUrl].length;i++){
-		var node=url_node[response.finalUrl][i]
+		var node=url_node[response.finalUrl][i];
 		if(!node){
 		    return;
 		}
@@ -89,7 +89,7 @@ function attachContent(response){
 function onClick(e){
 	//console.log(e.target.attachId);
 	var n3=url_node_multi[e.target.attachId];
-	if(e.target.innerHTML=='收起'){
+	if(e.target.innerHTML==='收起'){
 		e.target.innerHTML='展开';
 		n3.style='height:52px; overflow: hidden;';
 	}else{

@@ -11,11 +11,10 @@
 // @grant        none
 // ==/UserScript==
 
-
-var i = 0;
 var buttons_map = {};//userid,buttons list
 var blacklist_set = new Set();
 var ck = "";
+var page_url = "";
 var url_ban = "/j/contact/addtoblacklist";
 var url_unban = "/j/contact/unban";
 
@@ -30,6 +29,7 @@ const banning_text = "正在加入黑名单...";
 const unbanning_text = "正在移出黑名单...";
 const error_text = "失败请重试";
 
+
 function getCookie(c_name) {
     if (document.cookie.length > 0) {
         var c_start = document.cookie.indexOf(c_name + "=");
@@ -43,13 +43,13 @@ function getCookie(c_name) {
     return "";
 }
 
-var user_list = [];
-var name_map = {};
-var node_map = {};
-var href_map = {};
-var button_list = [];
-var cur = 0;
-
+function ban_simple(user_id) {
+    var xmlhttp = new XMLHttpRequest();
+    var data = "people=" + user_id + "&ck=" + ck;
+    xmlhttp.open("POST", url_ban, true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.send(data);
+}
 
 function ban(user_id, node, callback) {
     var xmlhttp = new XMLHttpRequest();
@@ -183,9 +183,90 @@ function process_comment() {
     mo.observe(document.body, option);
 }
 
-// 点赞
-function process_like() {
+function do_blacklist_page(url) {
+    var xmlhttp = new XMLHttpRequest();
+    xmlhttp.open("GET", url, true);
+    xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4) {
+            if (xmlhttp.status === 200) {
+                let parser = new window.DOMParser();
+                let xmlDoc = parser.parseFromString(xmlhttp.response, "text/html");
+                let items = xmlDoc.querySelectorAll("li div.content");
+                for (let i = 0; i < items.length; i++) {
+                    let item = items[i];
+                    let a = item.children[0];
+                    let user_id = get_user_id_from_url(a.href);
+                    console.log(`拉黑${user_id}`);
+                }
+            }
+        }
+    };
+    xmlhttp.send();
+    return 0;// 返回该页的人数
+}
 
+function do_blacklist_all_status(e) {
+    b = e.target;
+    console.log("blacklist all...");
+    for (let i = 0; ; i += 20) {
+        b.innerHTML = `正在拉黑第${i / 20 + 1}页`;
+        url = `${page_url}?start=${i}&tab=like#like`;
+        let n = do_blacklist_page(url);
+        if (n === 0) {
+            b.innerHTML = `已全部拉黑`;
+            break;
+        } else if (n === -1) {
+            b.innerHTML = '失败请重试';
+        }
+    }
+}
+
+function do_blacklist_all_note(e) {
+    b = e.target;
+    console.log("blacklist all...");
+    for (let i = 0; ; i += 100) {
+        b.innerHTML = `正在拉黑第${i / 100 + 1}页`;
+        url = `${page_url}?start=${i}&type=like#like`;
+        let n = do_blacklist_page(url);
+        if (n === 0) {
+            b.innerHTML = `已全部拉黑`;
+            break;
+        } else if (n === -1) {
+            b.innerHTML = '失败请重试';
+        }
+    }
+}
+
+// 点赞
+function process_note_like() {
+    let tabs = document.querySelector("div.tabs");
+    let b = document.createElement('a');
+    b.innerHTML = "一键拉黑所有点赞的人";
+    b.style = "float: right; font-size: 13px; line-height: 1.2; color: #fff; background:#bbb; opacity: 1;";
+    // b.onmouseover = (e) => {
+    //     e.target.style.opacity = 1;
+    // };
+    // b.onmouseout = (e) => {
+    //     e.target.style.opacity = 0;
+    // };
+    b.onclick = do_blacklist_all_note;
+    tabs.append(b);
+}
+
+function process_status_like() {
+    let tabs = document.querySelector("div.tabs");
+    let b = document.createElement('a');
+    b.innerHTML = "一键拉黑所有点赞的人";
+    b.style = "float: right; font-size: 13px; line-height: 1.2; color: #fff; background:#bbb; opacity: 1;";
+    // b.onmouseover = (e) => {
+    //     e.target.style.opacity = 1;
+    // };
+    // b.onmouseout = (e) => {
+    //     e.target.style.opacity = 0;
+    // };
+    b.onclick = do_blacklist_all_status;
+    tabs.append(b);
 }
 
 // 转发 - 广播
@@ -224,7 +305,7 @@ function process_rec() {
 
 // 收藏-日志, 日志的收藏是动态加载的
 function process_note_collect() {
-    function process_item(item){
+    function process_item(item) {
         let a = item.children[0];
         let user_id = get_user_id_from_url(a.href);
         let b = get_blacklist_button(
@@ -239,10 +320,12 @@ function process_note_collect() {
         };
         item.insertBefore(b, item.children[2]);
     }
+
     let items = document.querySelectorAll("li div.content");
     for (let i = 0; i < items.length; i++) {
         process_item(items[i]);
     }
+
     function callback(records) {
         records.map(function (record) {
             if (record.addedNodes.length !== 0) {
@@ -271,9 +354,10 @@ function process_note_collect() {
     mo.observe(document.body, option);
 
 }
+
 // 收藏-广播,广播的收藏也是动态的
 function process_status_collect() {
-    function process_item(item){
+    function process_item(item) {
         let a = item.children[0];
         let user_id = get_user_id_from_url(a.href);
         let b = get_blacklist_button(
@@ -288,10 +372,12 @@ function process_status_collect() {
         };
         item.append(b);
     }
+
     let items = document.querySelectorAll("li div.content");
     for (let i = 0; i < items.length; i++) {
         process_item(items[i]);
     }
+
     function callback(records) {
         records.map(function (record) {
             if (record.addedNodes.length !== 0) {
@@ -342,12 +428,15 @@ function process_status_collect() {
     } else {
         return;
     }
+    page_url = page;
 
     let tab_mode = "comment";
     if (arg.indexOf("comment") !== -1) {
         tab_mode = "comment";
-    } else if (arg.indexOf("like") !== -1) {
-        tab_mode = "like";
+    } else if (arg.indexOf("type=like") !== -1) {
+        tab_mode = "note_like";
+    } else if (arg.indexOf("tab=like") !== -1) {
+        tab_mode = "status_like";
     } else if (arg.indexOf("tab=reshare") !== -1) {
         tab_mode = "reshare"; //for status
     } else if (arg.indexOf("type=rec") !== -1) {
@@ -361,8 +450,10 @@ function process_status_collect() {
     console.log(tab_mode);
     if (tab_mode === "comment") {
         process_comment();
-    } else if (tab_mode === "like") {
-        process_like();
+    } else if (tab_mode === "note_like") {
+        process_note_like();
+    } else if (tab_mode === "status_like") {
+        process_status_like();
     } else if (tab_mode === "reshare") {
         process_reshare();
     } else if (tab_mode === "rec") {
