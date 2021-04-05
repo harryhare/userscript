@@ -8,4 +8,4 @@
 * 当userid是name 时，找到userid再拉黑 done
   * 从image 提取 user-id
 
-* 小组帖子
+* 小组帖子 done
