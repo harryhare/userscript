@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         douban one click blacklist
 // @namespace    https://github.com/harryhare/
-// @version      0.0.3
+// @version      0.0.4
 // @description  add button to douban to delete follower
 // @author       harryhare
 // @license      GPL 3.0
@@ -204,7 +204,7 @@ function process_comment() {
 
 // 小组 回复
 function process_comment_group() {
-    let items = document.querySelectorAll("div.operation_div");
+    let items = document.querySelectorAll("div.operation-div");
     for (let i = 0; i < items.length; i++) {
         let item = items[i];
         let user_id = item.id;
