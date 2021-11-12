@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore Clipboard ( 剪贴板消毒，去掉版权信息 )
 // @namespace    https://github.com/harryhare
-// @version      0.4.7
+// @version      0.4.8
 // @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
@@ -71,54 +71,61 @@ function do_360doc(){
 	}
 }
 
-
-
 function do_bilibili(){
-
-	async function clean(e) {
-		e.preventDefault();
-		//可能有用
-		 e.stopImmediatePropagation();
-		 // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
-		var copytext = window.getSelection().toString();
-		//console.log(await navigator.clipboard.readText());
-		await navigator.clipboard.writeText(window.getSelection().toString());
-
-
-		// 没有效果
-		// var clipdata = e.clipboardData || window.clipboardData;
-		// console.log(clipdata.getData('Text'));
-		// console.log(clipdata.getData('text/plain'));
-		// let clipboardItems = [];
-		// console.log("items begin");
-		// for (const item of e.clipboardData.items) {
-			// console.log(item);
-			// if (!item.type.startsWith('image/')) {
-				// continue;
-			// }
-			// clipboardItems.push(
-				// new ClipboardItem({
-					// [item.type]: item,
-				// })
-			// );
-		// }
-		// if (clipdata) {
-			// clipdata.setData('text/plain', copytext);
-			// clipdata.setData('Text', copytext);
-		// }
-	}
-	var targets=document.querySelectorAll('div.article-holder');
+	var targets=document.querySelectorAll('div#article-content');
 	for(let i=0;i<targets.length;i++){
-		targets[i].oncopy=clean;
+		targets[i].oncopy=(e)=>{e.stopPropagation();};
 	}
-
-    // 因为B站js函数中有这样的代码，
-    //    i.preventDefault(),
-	//	  i.stopPropagation()
-	// 所以直接在body上面家 listener 没有效果
-	// document.body.addEventListener('copy', clean);
-	// document.body.oncopy=clean;
 }
+
+
+// B站改了，这个是原先的代码
+// function do_bilibili(){
+//
+// 	async function clean(e) {
+// 		e.preventDefault();
+// 		//可能有用
+// 		 e.stopImmediatePropagation();
+// 		 // 在执行完当前事件处理程序之后，停止当前节点以及所有后续节点的事件处理程序的运行
+// 		var copytext = window.getSelection().toString();
+// 		//console.log(await navigator.clipboard.readText());
+// 		await navigator.clipboard.writeText(window.getSelection().toString());
+//
+//
+// 		// 没有效果
+// 		// var clipdata = e.clipboardData || window.clipboardData;
+// 		// console.log(clipdata.getData('Text'));
+// 		// console.log(clipdata.getData('text/plain'));
+// 		// let clipboardItems = [];
+// 		// console.log("items begin");
+// 		// for (const item of e.clipboardData.items) {
+// 			// console.log(item);
+// 			// if (!item.type.startsWith('image/')) {
+// 				// continue;
+// 			// }
+// 			// clipboardItems.push(
+// 				// new ClipboardItem({
+// 					// [item.type]: item,
+// 				// })
+// 			// );
+// 		// }
+// 		// if (clipdata) {
+// 			// clipdata.setData('text/plain', copytext);
+// 			// clipdata.setData('Text', copytext);
+// 		// }
+// 	}
+// 	var targets=document.querySelectorAll('div.article-holder');
+// 	for(let i=0;i<targets.length;i++){
+// 		targets[i].oncopy=clean;
+// 	}
+//
+//     // 因为B站js函数中有这样的代码，
+//     //    i.preventDefault(),
+// 	//	  i.stopPropagation()
+// 	// 所以直接在body上面家 listener 没有效果
+// 	// document.body.addEventListener('copy', clean);
+// 	// document.body.oncopy=clean;
+// }
 
 
 function do_geekbang(){
