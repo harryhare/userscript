@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Restore Clipboard ( 剪贴板消毒，去掉版权信息 )
 // @namespace    https://github.com/harryhare
-// @version      0.4.10
+// @version      0.4.11
 // @description  remove annoying copyright words on zhihu.com, jianshu.com, douban.com...
 // @author       harryhare
 // @license      GPL 3.0
@@ -79,7 +79,8 @@ function do_bilibili(){
 }
 
 function do_zhihu(){
-	var targets=document.querySelectorAll('div.RichContent--unescapable');
+	//var targets=document.querySelectorAll('div.RichContent--unescapable');# 使用这个selecter，后面动态加载的部分依然会有问题
+	var targets=document.querySelectorAll('main.App-main');
 	for(let i=0;i<targets.length;i++){
 		targets[i].oncopy=(e)=>{e.stopPropagation();};
 		//targets[i].className=""
