@@ -30,4 +30,10 @@
         //console.log(x[i].attributes["data-status-url"]);
     }
 
+    x=document.getElementsByClassName("block note-block");
+    for(var i=0;i<x.length;i++){
+        x[i].getElementsByClassName("content")[0].className=""
+    }
+
+
 })();
